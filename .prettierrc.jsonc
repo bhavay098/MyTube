@@ -1,0 +1,9 @@
+// Prettier configuration
+
+{
+    "singleQuote": false,   // Use double quotes instead of single quotes
+    "bracketSpacing": true,   // Add spaces inside object brackets -> { foo: bar } instead of {foo: bar}
+    "tabWidth": 2,   // Set indentation to 2 spaces per tab
+    "trailingComma": "es5",   // Add trailing commas where valid in ES5 (objects, arrays, etc.). Example: { foo: "bar", } instead of { foo: "bar" }
+    "semi": true   // Always add a semicolon at the end of statements
+}
