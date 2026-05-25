@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://mytube-wo5b.onrender.com/api/v1",
   withCredentials: true,
 });
 
@@ -54,7 +56,7 @@ axiosInstance.interceptors.response.use(
         // - generate new access token
         // - set new accessToken cookie
         await axios.post(
-          "http://localhost:8000/api/v1/users/refresh-token",
+          `${import.meta.env.VITE_API_BASE_URL}/users/refresh-token`,
 
           // Empty body because cookies already contain tokens
           {},

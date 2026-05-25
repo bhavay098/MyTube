@@ -17,7 +17,7 @@ app.use(express.json({ limit: '16kb' }))
 // - limit: also capped at 16kb
 app.use(express.urlencoded({ extended: true, limit: '16kb' }))
 
-// Serve static files from the "public" folder. Example: files like images, css, js can be accessed via http://localhost:PORT/filename
+// Serve static files from the "public" folder. Example: files like images, css, js can be accessed via your backend URL
 app.use(express.static('public'))
 
 // Parse cookies from the incoming requests - makes cookies available in req.cookies - useful for auth tokens stored in cookies
@@ -37,7 +37,7 @@ import dashboardRouter from "./routes/dashboard.routes.js"
 
 
 // ----------- routes declaration -----------------
-app.use('/api/v1/users', userRouter)   // http://localhost:8000/api/v1/users/register
+app.use('/api/v1/users', userRouter)   
 app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/tweets", tweetRouter)
 app.use("/api/v1/subscriptions", subscriptionRouter)

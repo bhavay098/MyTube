@@ -168,9 +168,8 @@ const loginUser = asyncHandler(async (req, res) => {
   // STEP 8: Security settings for storing tokens in browser cookies
   const cookieOptions = {
     httpOnly: true, // Cookie can't be accessed by JavaScript (prevents XSS attacks)
-    secure: true, // Cookie only sent over HTTPS (set to false for localhost development)
-    // sameSite: isProd ? "none" : "lax",
-    // path: "/",
+    secure: process.env.NODE_ENV === "production", // Cookie only sent over HTTPS in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   // STEP 9: Send tokens as cookies and user info in JSON response
@@ -203,11 +202,10 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   // STEP 2: CONFIGURE COOKIE OPTIONS. Cookie options to match login cookies
   const cookieOptions = {
-  httpOnly: true,
-  secure: true,
-//   sameSite: isProd ? "none" : "lax",
-//   path: "/",
-};
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
 
   // STEP 3: SEND SUCCESS RESPONSE AND CLEAR COOKIES
   return res
@@ -258,11 +256,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   );
 
   const cookieOptions = {
-  httpOnly: true,
-  secure: true,
-//   sameSite: isProd ? "none" : "lax",
-//   path: "/",
-};
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
 
   // 9. Send new tokens as cookies + JSON response | Update browser cookies AND send tokens in response body
   return res
