@@ -1,7 +1,10 @@
 import axiosInstance from "../api/axios.js";
 
 export const loginUser = async (userData) => {
-  const response = await axiosInstance.post("/users/login", userData);
+  const response = await axiosInstance.post("/users/login", userData, {
+    skipAuthRefresh: true,
+    suppressAuthRedirect: true,
+  });
 
   return response.data;
 };
