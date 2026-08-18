@@ -18,16 +18,10 @@ const LikedVideos = () => {
         const data = await getLikedVideos();
         const likedVideoDocs = (data || [])
           .map((item) => item.video)
-          .filter(Boolean)
-          .map((video) => ({
-            ...video,
-            owner: video.owner || {},
-          }));
+          .filter(Boolean);
         setVideos(likedVideoDocs);
       } catch (error) {
-        if (error?.response?.status !== 404) {
-          toast.error(error?.response?.data?.message || "Failed to load likes");
-        }
+        toast.error(error?.response?.data?.message || "Failed to load liked videos");
       } finally {
         setLoading(false);
       }
@@ -38,12 +32,17 @@ const LikedVideos = () => {
 
   return (
     <Layout>
-      <div className="animate-fade-in">
-        <div className="mb-8 flex items-center gap-3">
+      <div className="animate-fade-in space-y-6">
+        <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent-soft)">
             <Heart size={20} className="text-(--accent)" />
           </div>
-          <h1 className="text-2xl font-bold text-(--text)">Liked Videos</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-(--text)">Liked Videos</h1>
+            <p className="text-xs text-(--muted)">
+              Videos you have liked across the platform
+            </p>
+          </div>
         </div>
 
         {loading ? (
@@ -52,7 +51,9 @@ const LikedVideos = () => {
           <EmptyState
             icon="heart"
             title="No liked videos"
-            description="Videos you like will appear here"
+            description="Videos you like will appear here for easy playback"
+            actionLabel="Discover Videos"
+            onAction={() => (window.location.href = "/explore")}
           />
         ) : (
           <VideoGrid videos={videos} />

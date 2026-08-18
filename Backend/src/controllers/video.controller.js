@@ -1,5 +1,9 @@
 import { Video } from "../models/video.model.js"
 import { User } from "../models/user.model.js"
+import { Subscription } from "../models/subscription.model.js"
+import { Comment } from "../models/comment.model.js"
+import { Like } from "../models/like.model.js"
+import { Playlist } from "../models/playlist.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
@@ -7,79 +11,94 @@ import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js
 import { validateMongoId } from "../utils/validateMongoId.js"
 import mongoose from "mongoose"
 
-
-// Function to get all videos with filtering, sorting, and pagination
+// Function to get all videos with filtering, category, sorting, and pagination
 const getAllVideos = asyncHandler(async (req, res) => {
-    //TODO: get all videos based on query, sort, pagination
+    const {
+        page = 1,
+        limit = 12,
+        query,
+        sortBy = "createdAt",
+        sortType = "desc",
+        userId,
+        category,
+        duration
+    } = req.query
 
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query   // Extract query parameters from the request. Set default values: page=1, limit=10 if not provided
-
-    const pageNumber = parseInt(page, 10)   // Convert page and limit to numbers (they come as strings from URL)
+    const pageNumber = parseInt(page, 10)
     const limitNumber = parseInt(limit, 10)
 
-    // Validate page number - must be 1 or greater
     if (pageNumber < 1 || isNaN(pageNumber)) {
         throw new ApiError(400, 'Invalid page number')
     }
 
-    // Validate limit - must be between 1 and 100
     if (limitNumber < 1 || limitNumber > 100 || isNaN(limitNumber)) {
         throw new ApiError(400, 'Limit must be between 1 and 100')
     }
 
-    const skip = (pageNumber - 1) * limitNumber   // Calculate how many videos to skip for pagination. Example: page 2 with limit 10 means skip first 10 videos
+    const skip = (pageNumber - 1) * limitNumber
+    const matchCondition = { isPublished: true }
 
-    const matchCondition = {}   // Build the filter conditions for MongoDB query
-
-    // If userId is provided, filter videos by that user
+    // Filter by userId/creator if provided
     if (userId) {
         validateMongoId(userId, 'User ID')
-        matchCondition.owner = new mongoose.Types.ObjectId(userId)   // Convert userId string to MongoDB ObjectId format
+        matchCondition.owner = new mongoose.Types.ObjectId(userId)
     }
 
-    // If search query is provided, search in title OR description
-    if (query) {
+    // Filter by category
+    if (category && category !== 'All') {
+        matchCondition.category = category
+    }
+
+    // Filter by video duration
+    if (duration === 'short') {
+        matchCondition.duration = { $lt: 240 } // < 4 mins
+    } else if (duration === 'medium') {
+        matchCondition.duration = { $gte: 240, $lte: 1200 } // 4 to 20 mins
+    } else if (duration === 'long') {
+        matchCondition.duration = { $gt: 1200 } // > 20 mins
+    }
+
+    // Search filter across title, description, or tags
+    if (query && query.trim()) {
+        const sanitizedQuery = query.trim()
         matchCondition.$or = [
-            // $regex searches for the text in the query variable. It looks for that text anywhere in the title field (beginning, middle, or end). 'i' makes it case-insensitive
-            { title: { $regex: query, $options: 'i' } },
-            { description: { $regex: query, $options: 'i' } },
+            { title: { $regex: sanitizedQuery, $options: 'i' } },
+            { description: { $regex: sanitizedQuery, $options: 'i' } },
+            { tags: { $in: [new RegExp(sanitizedQuery, 'i')] } }
         ]
     }
 
-    matchCondition.isPublished = true   // Only show published videos (not drafts)
+    // Build sorting options
+    const sortOptions = {}
+    const sortDirection = sortType === 'asc' ? 1 : -1
 
-    const sortOptions = {}   // Build sorting options
-
-    // If sortBy is provided, sort by the specified field
-    if (sortBy) {
-        sortOptions[sortBy] = sortType === 'asc' ? 1 : -1   // 'asc' = ascending (1), anything else = descending (-1)
+    if (sortBy === 'trending' || sortBy === 'popular' || sortBy === 'views') {
+        sortOptions.views = -1
+        sortOptions.createdAt = -1
+    } else if (sortBy === 'likes') {
+        sortOptions.likes = -1
+        sortOptions.createdAt = -1
+    } else if (sortBy) {
+        sortOptions[sortBy] = sortDirection
     } else {
-        sortOptions.createdAt = -1   // Default: sort by creation date, newest first
+        sortOptions.createdAt = -1
     }
 
-    // MongoDB aggregation pipeline to fetch videos
+    // Pipeline to fetch videos with populated owner details
     const videos = await Video.aggregate([
+        { $match: matchCondition },
+        { $sort: sortOptions },
+        { $skip: skip },
+        { $limit: limitNumber },
         {
-            $match: matchCondition   // Step 1: Filter videos based on our conditions
-        },
-        {
-            $sort: sortOptions   // Step 2: Sort the filtered videos
-        },
-        {
-            $skip: skip   // Step 3: Skip videos for pagination (like OFFSET in SQL)
-        },
-        {
-            $limit: limitNumber   // Step 4: Limit the number of results (like LIMIT in SQL)
-        },
-        {
-            $lookup: {   // Step 5: Join with users collection to get owner details
-                from: 'users',   // Collection to join with
-                foreignField: '_id',   // Field in users collection
-                localField: 'owner',   // Field in videos collection
-                as: 'owner',   // Name for the joined data
-                pipeline: [   // sub pipeline
+            $lookup: {
+                from: 'users',
+                foreignField: '_id',
+                localField: 'owner',
+                as: 'owner',
+                pipeline: [
                     {
-                        $project: {   // Only include specific user fields (not password, etc.)
+                        $project: {
                             username: 1,
                             fullName: 1,
                             avatar: 1,
@@ -88,294 +107,393 @@ const getAllVideos = asyncHandler(async (req, res) => {
                 ]
             }
         },
-        {
-            $unwind: '$owner'   // Step 6: Convert owner from array to single object. $lookup returns an array, but we only have one owner per video
-        }
+        { $unwind: '$owner' }
     ])
 
-    // If no videos found, return empty response with pagination info
-    if (!videos || videos.length === 0) {
-        return res
-            .status(200)
-            .json(new ApiResponse(
-                200,
-                {
-                    videos: [],
-                    pagination: {
-                        totalVideos: 0,
-                        totalPages: 0,
-                        currentPage: pageNumber,
-                        limit: limitNumber,
-                        hasNextPage: false,
-                        hasPrevPage: false
-                    }
-                },
-                'No videos found'
-            ))
-    }
+    const totalVideos = await Video.countDocuments(matchCondition)
+    const totalPages = Math.ceil(totalVideos / limitNumber)
 
-    const totalVideos = await Video.countDocuments(matchCondition)   // Count total videos matching our filters (for pagination)
-    const totalPages = Math.ceil(totalVideos / limitNumber)   // Calculate total pages needed. Example: 25 videos with limit 10 = 3 pages
-
-    // Send successful response with videos and pagination info
-    return res
-        .status(200)
-        .json(new ApiResponse(
+    return res.status(200).json(
+        new ApiResponse(
             200,
             {
-                videos: videos,
+                videos,
                 pagination: {
-                    totalVideos,   // Total count of videos
-                    totalPages,   // Total number of pages
-                    currentPage: pageNumber,   // Current page number
-                    limit: limitNumber,   // Videos per page
-                    hasNextPage: pageNumber < totalPages,   // Is there a next page?
-                    hasPrevPage: pageNumber > 1   // Is there a previous page?
+                    totalVideos,
+                    totalPages,
+                    currentPage: pageNumber,
+                    limit: limitNumber,
+                    hasNextPage: pageNumber < totalPages,
+                    hasPrevPage: pageNumber > 1
                 }
             },
             'Videos fetched successfully'
-        ))
+        )
+    )
 })
 
+// Publish a new video
 const publishVideo = asyncHandler(async (req, res) => {
-    // TODO: get video, upload to cloudinary, create video
+    const { title, description, category = "All", tags } = req.body
 
-    const { title, description } = req.body   // Extract title and description from request body
-
-    if (!title || !description) {   // Validate that both title and description are provided
-        throw new ApiError(400, 'All fields are required')
+    if (!title || !description) {
+        throw new ApiError(400, 'Title and description are required')
     }
 
-    // Extract video file and thumbnail paths from uploaded files. req.files contains multiple files uploaded via multer
-    // We're accessing the first file [0] from both 'videoFile' and 'thumbnail' arrays
     const videoLocalPath = req.files?.videoFile?.[0]?.path
     const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path
 
-    if (!videoLocalPath || !thumbnailLocalPath) {   // Check if both files were uploaded
+    if (!videoLocalPath || !thumbnailLocalPath) {
         throw new ApiError(400, 'Both video and thumbnail files are required')
     }
 
-    // Upload video file & thumbnail to Cloudinary and get response with URL and metadata
+    // Upload video file & thumbnail to Cloudinary
     const uploadedVideo = await uploadOnCloudinary(videoLocalPath)
     const uploadedThumbnail = await uploadOnCloudinary(thumbnailLocalPath)
 
-    if (!uploadedVideo?.url || !uploadedThumbnail?.url) {   // Verify both uploads were successful by checking if URLs exist
-        throw new ApiError(400, 'Error while uploading')
+    if (!uploadedVideo?.url || !uploadedThumbnail?.url) {
+        throw new ApiError(400, 'Error while uploading files to cloud storage')
     }
 
-    // Create new video document in database with all necessary fields
+    // Parse tags array if string
+    let parsedTags = []
+    if (tags) {
+        parsedTags = Array.isArray(tags)
+            ? tags
+            : tags.split(',').map((t) => t.trim()).filter(Boolean)
+    }
+
     const video = await Video.create({
-        videoFile: uploadedVideo.url,   // Cloudinary URL for the video
-        videoFilePublicId: uploadedVideo.public_id,   // Cloudinary public ID (needed for deletion)
-        thumbnail: uploadedThumbnail.url,   // Cloudinary URL for thumbnail
-        thumbnailPublicId: uploadedThumbnail.public_id,   // Cloudinary public ID (needed for deletion)
-        title,   // Video title from request
-        description,   // Video description from request
-        duration: uploadedVideo.duration,   // Video duration from Cloudinary metadata
-        owner: req.user?._id   // User ID from authenticated user (via middleware)
+        videoFile: uploadedVideo.url,
+        videoFilePublicId: uploadedVideo.public_id,
+        thumbnail: uploadedThumbnail.url,
+        thumbnailPublicId: uploadedThumbnail.public_id,
+        title: title.trim(),
+        description: description.trim(),
+        category: category || 'All',
+        tags: parsedTags,
+        duration: uploadedVideo.duration || 0,
+        owner: req.user?._id
     })
 
-    if (!video) {   // checking whether video dociment exists in DB
-        throw new ApiError(500, "failed to publish");
+    if (!video) {
+        throw new ApiError(500, "Failed to publish video");
     }
 
-    // Return success response with created video data
-    return res
-        .status(201)
-        .json(new ApiResponse(
-            201,
-            video,
-            'Video published successfully'
-        ))
+    return res.status(201).json(
+        new ApiResponse(201, video, 'Video published successfully')
+    )
 })
 
-// Function to get a single video by its ID
+// Get video details by ID with populated owner, subscribe status, and view increment
 const getVideoById = asyncHandler(async (req, res) => {
-    //TODO: get video by id
+    const { videoId } = req.params
+    validateMongoId(videoId, 'Video ID')
 
-    const { videoId } = req.params   // Extract videoId from URL parameters (e.g., /videos/:videoId)
-    validateMongoId(videoId, 'Video ID')   // Validate videoId format and existence in req.params before proceeding
-
-    // Load the published video first so we can decide whether this request should count as a view.
     const video = await Video.findOne({
         _id: videoId,
         isPublished: true
-    })
-        // Join with users collection to get owner details. 'owner' is the field to populate. fullName username avatar' are the specific fields we want from the user
-        .populate('owner', 'fullName username avatar')
-        // Select only specific fields to return. This limits the data sent to the client (better performance & security). Not sending unnecessary fields like internal timestamps, etc.
-        .select('videoFile thumbnail title description duration views likes isPublished owner')
+    }).populate('owner', 'fullName username avatar bio')
 
-    if (!video) {   // Check if video exists in database or isn't published. findOneAndUpdate returns null if no document matches the conditions
-        throw new ApiError(404, 'Video not found')
-    }
-
-    // Only count the open as a view when the requester is not the owner.
-    const isOwner = req.user && video.owner?._id?.toString() === req.user._id.toString()
-    if (req.user && !isOwner) {
-        await Video.findByIdAndUpdate(
-            videoId,
-            { $inc: { views: 1 } },
-        )
-        video.views += 1
-    }
-
-    // If user is logged in (authenticated), add video to their watch history
-    if (req.user) {   // req.user exists only if user is authenticated (set by auth middleware)
-        await User.findByIdAndUpdate(
-            req.user._id,   // Find the logged-in user
-            { $addToSet: { watchHistory: videoId } }   // $addToSet adds videoId to watchHistory array only if it's not already there (prevents duplicates)
-        )
-    }
-
-    // Send successful response with the video data
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            video,   // The video object with owner details
-            'Video fetched successfully'
-        ))
-})
-
-const updateVideo = asyncHandler(async (req, res) => {
-    //TODO: update video details like title, description, thumbnail
-
-    const { videoId } = req.params   // Extract videoId from URL parameters (e.g., /videos/:videoId)
-    validateMongoId(videoId, 'Video ID')   // Validate videoId format and existence in req.params before proceeding
-
-    // Check if video exists in database before proceeding. This prevents wasting resources on non-existent videos (fail fast approach)
-    const oldVideo = await Video.findById(videoId)
-
-    if (!oldVideo) {
-        throw new ApiError(404, 'Video not found')
-    }
-
-    // Check if the logged-in user is the owner of the video (security check to prevent unauthorized updates)
-    if (!oldVideo.owner.equals(req.user._id)) {
-        throw new ApiError(403, 'You are not authorized to update this video')
-    }
-
-    const { title, description, } = req.body   // Extract title and description from request body
-
-    if (!title || !description) {   // Validate that both title and description are provided
-        throw new ApiError(400, 'All fields are required')
-    }
-
-    // Extract thumbnail file path from uploaded file. req.file contains single file uploaded via multer
-    const thumbnailLocalPath = req.file?.path
-
-    if (!thumbnailLocalPath) {   // Check if thumbnail file was uploaded
-        throw new ApiError(400, 'Thumbnail file is missing')
-    }
-
-    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)   // Upload new thumbnail to Cloudinary and get response with URL and metadata
-
-    if (!thumbnail?.url) {   // Verify upload was successful by checking if URL exists
-        throw new ApiError(400, 'Error while uploading thumbnail')
-    }
-
-    // Update video document in database with new data
-    const video = await Video.findByIdAndUpdate(
-        videoId,
-        {
-            $set: {   // $set operator updates only specified fields
-                title,   // New title
-                description,   // New description
-                thumbnail: thumbnail.url,   // New Cloudinary thumbnail URL
-                thumbnailPublicId: thumbnail.public_id   // New Cloudinary public ID
-            }
-        },
-        { new: true }   // { new: true } option returns the updated document instead of the old one
-    )
-
-    if (!video) {   // If update failed, delete the newly uploaded thumbnail to avoid orphaned files
-        await deleteFromCloudinary(thumbnail.public_id)
-        throw new ApiError(500, 'Failed to update video')
-    }
-
-    // Delete old thumbnail from Cloudinary after successful update. This keeps cloud storage clean and prevents orphaned files
-    // Done after update to ensure we don't lose the old thumbnail if update fails
-    await deleteFromCloudinary(oldVideo.thumbnailPublicId)
-
-    // Return success response with updated video data
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            video,
-            'Video updated successfully'
-        ))
-})
-
-const deleteVideo = asyncHandler(async (req, res) => {
-    //TODO: delete video
-
-    const { videoId } = req.params   // Extract videoId from URL parameters (e.g., /videos/:videoId)
-    validateMongoId(videoId, 'Video ID')   // Validate videoId format and existence in req.params before proceeding
-
-    const video = await Video.findById(videoId)   // fetching video to be deleted from videoId
-
-    // Check if video existed in database. If video is null, it means no document was found with that ID
     if (!video) {
         throw new ApiError(404, 'Video not found')
     }
 
-    // Check if the logged-in user is the owner of the video (security check to prevent unauthorized updates)
-    if (!video.owner.equals(req.user._id)) {
-        throw new ApiError(403, 'You are not authorized to update this video')
+    // Increment view count if not the video owner
+    const isOwner = req.user && video.owner?._id?.toString() === req.user._id.toString()
+    if (!isOwner) {
+        await Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } })
+        video.views += 1
     }
 
-    // Delete the video document from the database. This removes all video metadata (title, description, etc.)
-    await Video.findByIdAndDelete(videoId)
+    // Add to user's watch history if authenticated
+    if (req.user) {
+        await User.findByIdAndUpdate(
+            req.user._id,
+            { $addToSet: { watchHistory: videoId } }
+        )
+    }
 
-    // Delete video file & thumbnail from Cloudinary using their public ID. This cleans up cloud storage and prevents orphaned files
-    await deleteFromCloudinary(video.videoFilePublicId)
-    await deleteFromCloudinary(video.thumbnailPublicId)
+    // Fetch subscriber count and isSubscribed state for the video owner
+    let subscribersCount = 0
+    let isSubscribed = false
 
-    // Return success response with empty data object. Empty object is returned since the video no longer exists
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            {},
-            'Video deleted successfully'
-        ))
+    if (video.owner?._id) {
+        subscribersCount = await Subscription.countDocuments({ channel: video.owner._id })
+        if (req.user) {
+            const sub = await Subscription.exists({
+                subscriber: req.user._id,
+                channel: video.owner._id
+            })
+            isSubscribed = !!sub
+        }
+    }
+
+    // Check if the current user liked this video
+    let isLiked = false
+    if (req.user) {
+        const like = await Like.exists({
+            video: videoId,
+            likedBy: req.user._id
+        })
+        isLiked = !!like
+    }
+
+    const videoData = video.toObject()
+    videoData.owner = {
+        ...videoData.owner,
+        subscribersCount,
+        isSubscribed
+    }
+    videoData.isLiked = isLiked
+
+    return res.status(200).json(
+        new ApiResponse(200, videoData, 'Video fetched successfully')
+    )
 })
 
-const togglePublishStatus = asyncHandler(async (req, res) => {
-    const { videoId } = req.params   // Extract videoId from URL parameters (e.g., /videos/:videoId/toggle-publish)
-    validateMongoId(videoId, 'Video ID')   // Validate videoId format and existence in req.params before proceeding
+// Get related / recommended videos for watch page sidebar
+const getRelatedVideos = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    validateMongoId(videoId, 'Video ID')
 
-    const video = await Video.findById(videoId)   // Find video by ID in DB to get current publish status
-
-    if (!video) {   // Check if video exists in database
+    const currentVideo = await Video.findById(videoId)
+    if (!currentVideo) {
         throw new ApiError(404, 'Video not found')
     }
 
-    // Check if the logged-in user is the owner of the video (security check to prevent unauthorized updates)
+    const relatedVideos = await Video.aggregate([
+        {
+            $match: {
+                _id: { $ne: new mongoose.Types.ObjectId(videoId) },
+                isPublished: true,
+                $or: [
+                    { category: currentVideo.category },
+                    { owner: currentVideo.owner },
+                    { tags: { $in: currentVideo.tags || [] } }
+                ]
+            }
+        },
+        { $sort: { views: -1, createdAt: -1 } },
+        { $limit: 10 },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'owner',
+                pipeline: [
+                    {
+                        $project: {
+                            fullName: 1,
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        { $unwind: '$owner' }
+    ])
+
+    // Fallback if not enough matching category/tag videos: fetch general latest videos
+    let results = relatedVideos
+    if (results.length < 5) {
+        const existingIds = [new mongoose.Types.ObjectId(videoId), ...results.map(v => v._id)]
+        const fallbackVideos = await Video.aggregate([
+            {
+                $match: {
+                    _id: { $nin: existingIds },
+                    isPublished: true
+                }
+            },
+            { $sort: { createdAt: -1 } },
+            { $limit: 10 - results.length },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'owner',
+                    foreignField: '_id',
+                    as: 'owner',
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                username: 1,
+                                avatar: 1
+                            }
+                        }
+                    ]
+                }
+            },
+            { $unwind: '$owner' }
+        ])
+        results = [...results, ...fallbackVideos]
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, results, 'Related videos fetched successfully')
+    )
+})
+
+// Get top trending videos
+const getTrendingVideos = asyncHandler(async (req, res) => {
+    const trendingVideos = await Video.aggregate([
+        { $match: { isPublished: true } },
+        { $sort: { views: -1, likes: -1, createdAt: -1 } },
+        { $limit: 24 },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'owner',
+                pipeline: [
+                    {
+                        $project: {
+                            fullName: 1,
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        { $unwind: '$owner' }
+    ])
+
+    return res.status(200).json(
+        new ApiResponse(200, trendingVideos, 'Trending videos fetched successfully')
+    )
+})
+
+// Update video details (thumbnail is now optional!)
+const updateVideo = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    validateMongoId(videoId, 'Video ID')
+
+    const oldVideo = await Video.findById(videoId)
+    if (!oldVideo) {
+        throw new ApiError(404, 'Video not found')
+    }
+
+    if (!oldVideo.owner.equals(req.user._id)) {
+        throw new ApiError(403, 'You are not authorized to update this video')
+    }
+
+    const { title, description, category, tags } = req.body
+
+    const updatePayload = {}
+    if (title && title.trim()) updatePayload.title = title.trim()
+    if (description && description.trim()) updatePayload.description = description.trim()
+    if (category) updatePayload.category = category
+    if (tags) {
+        updatePayload.tags = Array.isArray(tags)
+            ? tags
+            : tags.split(',').map((t) => t.trim()).filter(Boolean)
+    }
+
+    // Handle optional new thumbnail upload
+    const thumbnailLocalPath = req.file?.path
+    let uploadedThumbnail = null
+
+    if (thumbnailLocalPath) {
+        uploadedThumbnail = await uploadOnCloudinary(thumbnailLocalPath)
+        if (uploadedThumbnail?.url) {
+            updatePayload.thumbnail = uploadedThumbnail.url
+            updatePayload.thumbnailPublicId = uploadedThumbnail.public_id
+        }
+    }
+
+    const updatedVideo = await Video.findByIdAndUpdate(
+        videoId,
+        { $set: updatePayload },
+        { new: true }
+    )
+
+    if (!updatedVideo) {
+        if (uploadedThumbnail?.public_id) {
+            await deleteFromCloudinary(uploadedThumbnail.public_id)
+        }
+        throw new ApiError(500, 'Failed to update video')
+    }
+
+    // If new thumbnail was uploaded successfully, delete old one
+    if (uploadedThumbnail && oldVideo.thumbnailPublicId) {
+        await deleteFromCloudinary(oldVideo.thumbnailPublicId)
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedVideo, 'Video updated successfully')
+    )
+})
+
+// Delete video and clean up associated database references and cloud assets
+const deleteVideo = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    validateMongoId(videoId, 'Video ID')
+
+    const video = await Video.findById(videoId)
+    if (!video) {
+        throw new ApiError(404, 'Video not found')
+    }
+
+    if (!video.owner.equals(req.user._id)) {
+        throw new ApiError(403, 'You are not authorized to delete this video')
+    }
+
+    // Delete the video document
+    await Video.findByIdAndDelete(videoId)
+
+    // Clean up Cloudinary assets
+    if (video.videoFilePublicId) await deleteFromCloudinary(video.videoFilePublicId)
+    if (video.thumbnailPublicId) await deleteFromCloudinary(video.thumbnailPublicId)
+
+    // Cascade clean up comments, likes, and remove from all playlists & watch histories
+    await Promise.allSettled([
+        Comment.deleteMany({ video: videoId }),
+        Like.deleteMany({ video: videoId }),
+        Playlist.updateMany({ videos: videoId }, { $pull: { videos: videoId } }),
+        User.updateMany({ watchHistory: videoId }, { $pull: { watchHistory: videoId } })
+    ])
+
+    return res.status(200).json(
+        new ApiResponse(200, {}, 'Video and associated data deleted successfully')
+    )
+})
+
+// Toggle video publish status
+const togglePublishStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    validateMongoId(videoId, 'Video ID')
+
+    const video = await Video.findById(videoId)
+    if (!video) {
+        throw new ApiError(404, 'Video not found')
+    }
+
     if (!video.owner.equals(req.user._id)) {
         throw new ApiError(403, 'You are not authorized to update this video')
     }
 
-    video.isPublished = !video.isPublished   // Toggle the isPublished field (true becomes false, false becomes true). ! operator inverts the boolean value
-    await video.save()   // Save the updated video document to database. Using .save() instead of findByIdAndUpdate to work with the existing document
+    video.isPublished = !video.isPublished
+    await video.save()
 
-    // Return success response with updated video data
-    return res
-        .status(200)
-        .json(new ApiResponse(
+    return res.status(200).json(
+        new ApiResponse(
             200,
             video,
-            `Video ${video.isPublished ? 'published' : 'unpublished'} successfully`   // Dynamic message based on new publish status using ternary operator
-        ))
+            `Video ${video.isPublished ? 'published' : 'unpublished'} successfully`
+        )
+    )
 })
-
 
 export {
     getAllVideos,
     publishVideo,
     getVideoById,
+    getRelatedVideos,
+    getTrendingVideos,
     updateVideo,
     deleteVideo,
     togglePublishStatus

@@ -21,11 +21,13 @@ const videoSchema = new Schema({
     },
     title: {
         type: String,   // Title of the video
-        required: true
+        required: true,
+        trim: true
     },
     description: {
         type: String,   // Description of the video
-        required: true
+        required: true,
+        trim: true
     },
     duration: {
         type: Number,
@@ -40,6 +42,16 @@ const videoSchema = new Schema({
         type: Number,
         default: 0
     },
+    category: {
+        type: String,
+        default: 'All',
+        trim: true,
+        index: true
+    },
+    tags: [{
+        type: String,
+        trim: true
+    }],
     isPublished: {
         type: Boolean,   // Whether video is public or not
         required: true,
@@ -48,14 +60,20 @@ const videoSchema = new Schema({
     owner: {
         type: Schema.Types.ObjectId,   // Reference to User collection
         ref: 'User',   // Each video belongs to a user
-        required: true
+        required: true,
+        index: true
     }
 
 }, { timestamps: true })
 
+// Search and performance indexes
+videoSchema.index({ title: 'text', description: 'text', tags: 'text' })
+videoSchema.index({ category: 1, isPublished: 1, createdAt: -1 })
+videoSchema.index({ views: -1, isPublished: 1 })
+videoSchema.index({ owner: 1, isPublished: 1, createdAt: -1 })
 
 // Plugins
-// Adds aggregation + pagination support to the schema. Useful for paginated video lists, search results, etc.
+// Adds aggregation + pagination support to the schema.
 videoSchema.plugin(mongooseAggregatePaginate)
 
 // Export Video model

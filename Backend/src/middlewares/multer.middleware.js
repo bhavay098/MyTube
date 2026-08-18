@@ -1,22 +1,51 @@
-import multer from "multer";   // Import Multer (middleware for handling file uploads in Express)
+import multer from "multer";
+import fs from "fs";
+import path from "path";
 
-// Configure Multer to use disk storage (saves files to a folder on your server)
+// Ensure the temporary upload directory exists
+const tempDir = "./public/temp";
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
+}
+
+// Configure Multer disk storage
 const storage = multer.diskStorage({
-    // Where to store uploaded files
-    destination: function (req, file, cb) {
-        // "cb" = callback -> first argument is error (null = no error), second is the folder path
-        cb(null, './public/temp')   // Files will be temporarily stored here
-    },
-    // How to name the uploaded files
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)   // Currently using the original file name from the client
-        /*
-         NOTE: Using original names can cause overwriting if two users upload same filename.
-         Better approach later: use Date.now() or unique IDs to make filename unique
-         Example: cb(null, Date.now() + '-' + file.originalname)
-        */
-    }
-})
+  destination: function (req, file, cb) {
+    cb(null, tempDir);
+  },
+  filename: function (req, file, cb) {
+    // Generate a unique, collision-resistant filename
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const sanitizedOriginalName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
+    cb(null, `${uniqueSuffix}-${sanitizedOriginalName}`);
+  },
+});
 
-// Create Multer instance with the above storage settings. This "upload" middleware can now be used in your routes
-export const upload = multer({ storage })
+// File filter to restrict uploads to valid video and image types
+const fileFilter = (req, file, cb) => {
+  const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"];
+  const allowedVideoTypes = ["video/mp4", "video/webm", "video/quicktime", "video/mkv", "video/x-matroska"];
+
+  if (
+    allowedImageTypes.includes(file.mimetype) ||
+    allowedVideoTypes.includes(file.mimetype)
+  ) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        `Unsupported file type: ${file.mimetype}. Only JPEG, PNG, WEBP, GIF, and MP4/WEBM/MOV video files are allowed.`
+      ),
+      false
+    );
+  }
+};
+
+// Create Multer instance with disk storage, size limit (100MB for video), and file filter
+export const upload = multer({
+  storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100 MB max file size
+  },
+  fileFilter,
+});

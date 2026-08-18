@@ -10,6 +10,11 @@ export const getUserTweets = async (userId) => {
   return response.data.data;
 };
 
+export const getAllTweetsFeed = async () => {
+  const response = await axiosInstance.get("/tweets/feed");
+  return response.data.data;
+};
+
 export const updateTweet = async (tweetId, editedContent) => {
   const response = await axiosInstance.patch(`/tweets/${tweetId}`, {
     editedContent,

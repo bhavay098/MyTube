@@ -1,52 +1,36 @@
-// require('dotenv').config({path: './.env'})
-// import mongoose from "mongoose";   // Import mongoose to connect with MongoDB
-// import { DB_NAME } from "./constants";   // Import a constant (DB_NAME) from another file (likely the database name)
-import 'dotenv/config'   // Import dotenv package to load environment variables from .env file
-// dotenv.config({ path: '../.env' });   // Load environment variables from the .env file into process.env | { path: '../.env' } means explicitly look for the .env file in the root folder
-import connectDB from "./db/index.js";   // Import the database connection function we created in db/index.js
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import connectDB from "./db/index.js";
 import { app } from './app.js';
 
+const PORT = process.env.PORT || 8000;
 
-connectDB()   // Call the function to connect to MongoDB
+connectDB()
     .then(() => {
-        app.listen(process.env.PORT, () => console.log(`Server is running at port: ${process.env.PORT}`))
+        const server = app.listen(PORT, () => {
+            console.log(`🚀 Server is running at port: ${PORT}`);
+        });
+
+        // Handle process termination signals for graceful shutdown
+        const gracefulShutdown = async (signal) => {
+            console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+            server.close(async () => {
+                console.log('HTTP server closed.');
+                try {
+                    await mongoose.connection.close(false);
+                    console.log('MongoDB connection closed.');
+                    process.exit(0);
+                } catch (err) {
+                    console.error('Error during MongoDB disconnect:', err);
+                    process.exit(1);
+                }
+            });
+        };
+
+        process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+        process.on('SIGINT', () => gracefulShutdown('SIGINT'));
     })
-    .catch((error) => console.log('MONGODB connection failed !!', error))
-
-
-
-
-
-
-
-
-
-
-
-
-/* +++++++++++++ First Approach +++++++++++++++++++
-
-import express from "express";   // Import express framework for creating the server
-const app = express()   // Create an Express application instance
-
-    // Immediately Invoked Async Function Expression (IIFE). Used here so we can use async/await at the top level
-    ; (async () => {
-        try {
-            await mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`)   // Connect to MongoDB using Mongoose. The URI comes from environment variables, DB_NAME is appended at the end
-            
-            // handeling error when DB is connected but express is facing issue while connecting with DB
-            app.on("error", (error) => {   // Handle server-level errors (like port already in use, etc.) | app.on(eventName, callback)
-                console.error("ERROR:", error)
-                throw error
-            })
-
-            app.listen(process.env.PORT, () => {   // Start the server on the port defined in .env
-                console.log(`App is listening on PORT: ${process.env.PORT}`)   
-            })
-
-        } catch (error) {
-            console.error('ERROR:', error)   // If there is an error in DB connection or server startup, log it
-            throw error
-        }
-    })()
-*/
+    .catch((error) => {
+        console.error('MONGODB connection failed !!', error);
+        process.exit(1);
+    });

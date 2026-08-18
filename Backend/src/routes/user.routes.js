@@ -1,5 +1,5 @@
-import { Router } from "express";   // Import Router from express to create route handlers
-import {   // Import all user-related controller functions that handle the business logic
+import { Router } from "express";
+import {
     loginUser,
     logoutUser,
     registerUser,
@@ -10,70 +10,49 @@ import {   // Import all user-related controller functions that handle the busin
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    removeFromWatchHistory,
+    clearWatchHistory,
 } from "../controllers/user.controller.js";
-import { upload } from '../middlewares/multer.middleware.js'   // Import multer middleware for handling file uploads (images, videos, etc.)
-import { verifyJWT, optionalJWT } from "../middlewares/auth.middleware.js";   // Import JWT verification middleware to protect routes (authentication)
+import { upload } from '../middlewares/multer.middleware.js';
+import { verifyJWT, optionalJWT } from "../middlewares/auth.middleware.js";
 
-// Create a new router instance to define routes
-const router = Router()
+const router = Router();
 
-
-// -------------- PUBLIC ROUTES (No authentication required) ------------------------------
-
-
-// Register - Register a new user with avatar and cover image
+// -------------- PUBLIC ROUTES ------------------------------
 router.route('/register').post(
-    // Multer middleware to handle multiple file uploads
     upload.fields([
         {
-            name: 'avatar',   // Field name in the form for profile picture
-            maxCount: 1   // Only allow one avatar file
+            name: 'avatar',
+            maxCount: 1
         },
         {
-            name: 'coverImage',   // Field name in the form for cover/banner image
-            maxCount: 1   // Only allow one cover image file
+            name: 'coverImage',
+            maxCount: 1
         }
     ]),
-    registerUser  // Controller function that processes registration
-)
+    registerUser
+);
 
-// Login existing user
-router.route('/login').post(loginUser)
+router.route('/login').post(loginUser);
+router.route('/refresh-token').post(refreshAccessToken);
 
+// Get user channel profile by username (optionalJWT allows guest or auth subscriber check)
+router.route('/channel/:username').get(optionalJWT, getUserChannelProfile);
 
-// ------------- SECURED ROUTES (Authentication required) -----------------
-// All routes below require verifyJWT middleware (except /refresh-token)
+// ------------- SECURED ROUTES -----------------
+router.route('/logout').post(verifyJWT, logoutUser);
+router.route('/change-password').post(verifyJWT, changeCurrentPassword);
+router.route('/current-user').get(verifyJWT, getCurrentUser);
+router.route('/update-account').patch(verifyJWT, updateAccountDetails);
+router.route('/avatar').patch(verifyJWT, upload.single('avatar'), updateUserAvatar);
+router.route('/cover-image').patch(verifyJWT, upload.single('coverImage'), updateUserCoverImage);
 
+// Watch History routes
+router.route('/watch-history')
+    .get(verifyJWT, getWatchHistory)
+    .delete(verifyJWT, clearWatchHistory);
 
-// Logout current user. verifyJWT ensures only logged-in users can logout
-router.route('/logout').post(verifyJWT, logoutUser)
+router.route('/watch-history/:videoId').delete(verifyJWT, removeFromWatchHistory);
 
-// Get new access token using refresh token. This allows users to stay logged in without re-entering credentials
-router.route('/refresh-token').post(refreshAccessToken)
-
-// Change user's password. verifyJWT ensures user is logged in before changing password
-router.route('/change-password').post(verifyJWT, changeCurrentPassword)
-
-// Get current logged-in user's information. verifyJWT identifies which user is making the request
-router.route('/current-user').get(verifyJWT, getCurrentUser)
-
-// Update account details (name, email, etc.). PATCH is used instead of PUT because we're updating partial data, not replacing entire document
-router.route('/update-account').patch(verifyJWT, updateAccountDetails)
-
-// Update user's profile picture | upload.single('avatar') handles single file upload with field name 'avatar'
-router.route('/avatar').patch(verifyJWT, upload.single('avatar'), updateUserAvatar)
-
-// Update user's cover/banner image | upload.single('coverImage') handles single file upload with field name 'coverImage'
-router.route('/cover-image').patch(verifyJWT, upload.single('coverImage'), updateUserCoverImage)
-
-// Get a user’s channel profile by username | :username is a URL parameter (e.g., /channel/johndoe)
-// optionalJWT is used to check if current user is subscribed if logged in, but allows public viewing
-router.route('/channel/:username').get(optionalJWT, getUserChannelProfile)
-
-// Get user's video watch history. verifyJWT ensures user can only see their own watch history
-router.route('/watch-history').get(verifyJWT, getWatchHistory)
-
-
-// Export the router to be used in the main app file
-export default router
+export default router;

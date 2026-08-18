@@ -29,3 +29,13 @@ export const getWatchHistory = async () => {
   const response = await axiosInstance.get("/users/watch-history");
   return response.data.data;
 };
+
+export const removeFromWatchHistory = async (videoId) => {
+  const response = await axiosInstance.delete(`/users/watch-history/${videoId}`);
+  return response.data;
+};
+
+export const clearWatchHistory = async () => {
+  const response = await axiosInstance.delete("/users/watch-history");
+  return response.data;
+};

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 // Define the User schema with fields and constraints
 const userSchema = new Schema({
@@ -39,62 +39,66 @@ const userSchema = new Schema({
     coverImagePublicId: {
         type: String,   // Cloudinary public_id (needed for deletion)
     },
+    bio: {
+        type: String,
+        default: "",
+        trim: true
+    },
     watchHistory: [{
         type: Schema.Types.ObjectId,
         ref: 'Video'   // stores references to Video documents
     }],
     password: {
-        type: String,   // plain password will never be stored directly, it will be hashed before saving (see pre-save hook below)
+        type: String,   // plain password will never be stored directly, it will be hashed before saving
         required: [true, 'Password is required']
     },
     refreshToken: {
         type: String   // refresh token stored for re-authentication
     }
     
-}, { timestamps: true })   // auto-generates createdAt and updatedAt fields   
-
+}, { timestamps: true })
 
 // Middleware: Hash password before saving
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();   // Only hash the password if it was modified or is new
+    if (!this.isModified('password')) return next();
 
     try {
-        this.password = await bcrypt.hash(this.password, 10)   // Hash the password with 10 salt rounds
-        next()
+        this.password = await bcrypt.hash(this.password, 10);
+        next();
     } catch (error) {
-        next(error)   // pass error to mongoose
+        next(error);
     }
-})
+});
 
 // Instance method: Check if entered password is correct
 userSchema.methods.isPasswordCorrect = async function (password) {
-    return await bcrypt.compare(password, this.password)   // Compare entered password with hashed password in DB
-}
+    return await bcrypt.compare(password, this.password);
+};
 
 // Instance method: Generate Access Token (short-lived)
 userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
-            _id: this._id,   // put user details in the payload
+            _id: this._id,
             email: this.email,
             username: this.username,
             fullName: this.fullName
         },
-        process.env.ACCESS_TOKEN_SECRET,   // secret key from env
+        process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-    )
-}
+    );
+};
 
 // Instance method: Generate Refresh Token (long-lived)
 userSchema.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
-            _id: this._id,   // only store minimal info
+            _id: this._id,
         },
-        process.env.REFRESH_TOKEN_SECRET,   // different secret key
+        process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
-    )
-}
+    );
+};
 
 // Export the User model
-export const User = mongoose.model('User', userSchema)
+export const User = mongoose.model('User', userSchema);

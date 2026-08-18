@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
   deleteVideo,
   getAllVideos,
+  getRelatedVideos,
+  getTrendingVideos,
   getVideoById,
   publishVideo,
   togglePublishStatus,
@@ -11,7 +13,10 @@ import { optionalJWT, verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
-// router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+
+// Public routes
+router.route("/feed/trending").get(getTrendingVideos);
+router.route("/related/:videoId").get(getRelatedVideos);
 
 router
   .route("/")

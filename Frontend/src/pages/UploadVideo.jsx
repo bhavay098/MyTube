@@ -7,11 +7,25 @@ import {
   ImagePlus,
   FileVideo,
   X,
+  Tag,
+  Folder
 } from "lucide-react";
 
 import Layout from "../components/layout/Layout.jsx";
 import Spinner from "../components/ui/Spinner.jsx";
 import { publishVideo } from "../services/video.service.js";
+
+const categories = [
+  "All",
+  "Music",
+  "Gaming",
+  "Tech",
+  "Education",
+  "Entertainment",
+  "News",
+  "Sports",
+  "Vlogs",
+];
 
 const UploadVideo = () => {
   const navigate = useNavigate();
@@ -21,6 +35,8 @@ const UploadVideo = () => {
   const [form, setForm] = useState({
     title: "",
     description: "",
+    category: "All",
+    tags: "",
   });
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
@@ -30,6 +46,8 @@ const UploadVideo = () => {
   const handleVideoChange = (file) => {
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file);
+    } else if (file) {
+      toast.error("Please upload a valid video file");
     }
   };
 
@@ -37,6 +55,8 @@ const UploadVideo = () => {
     if (file && file.type.startsWith("image/")) {
       setThumbnail(file);
       setThumbnailPreview(URL.createObjectURL(file));
+    } else if (file) {
+      toast.error("Please upload a valid image file");
     }
   };
 
@@ -53,8 +73,18 @@ const UploadVideo = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!form.title.trim()) {
+      toast.error("Video title is required");
+      return;
+    }
+
+    if (!form.description.trim()) {
+      toast.error("Video description is required");
+      return;
+    }
+
     if (!videoFile || !thumbnail) {
-      toast.error("Video file and thumbnail are required");
+      toast.error("Both video file and thumbnail image are required");
       return;
     }
 
@@ -62,13 +92,17 @@ const UploadVideo = () => {
       setLoading(true);
       const payload = new FormData();
 
-      payload.append("title", form.title);
-      payload.append("description", form.description);
+      payload.append("title", form.title.trim());
+      payload.append("description", form.description.trim());
+      payload.append("category", form.category);
+      if (form.tags.trim()) {
+        payload.append("tags", form.tags.trim());
+      }
       payload.append("videoFile", videoFile);
       payload.append("thumbnail", thumbnail);
 
       await publishVideo(payload);
-      toast.success("Video uploaded successfully!");
+      toast.success("Video uploaded and published successfully!");
       navigate("/");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to upload video");
@@ -92,12 +126,12 @@ const UploadVideo = () => {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-(--border) bg-(--surface) p-6">
+        <div className="rounded-3xl border border-(--border) bg-(--surface) p-6 sm:p-8 shadow-(--shadow-sm)">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-(--muted)">
-                Title
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+                Title <span className="text-(--accent)">*</span>
               </label>
               <input
                 value={form.title}
@@ -108,14 +142,14 @@ const UploadVideo = () => {
                   }))
                 }
                 placeholder="Give your video a catchy title"
-                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-(--muted)">
-                Description
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+                Description <span className="text-(--accent)">*</span>
               </label>
               <textarea
                 value={form.description}
@@ -126,26 +160,70 @@ const UploadVideo = () => {
                   }))
                 }
                 rows={4}
-                placeholder="Tell viewers about your video"
-                className="w-full resize-none rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                placeholder="Tell viewers what your video is about..."
+                className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
               />
+            </div>
+
+            {/* Category & Tags Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-(--muted)">
+                  <Folder size={13} className="text-(--accent)" />
+                  Category
+                </label>
+                <select
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      category: e.target.value,
+                    }))
+                  }
+                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent)"
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-(--muted)">
+                  <Tag size={13} className="text-(--accent)" />
+                  Tags (comma separated)
+                </label>
+                <input
+                  value={form.tags}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      tags: e.target.value,
+                    }))
+                  }
+                  placeholder="tutorial, coding, react"
+                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent)"
+                />
+              </div>
             </div>
 
             {/* Video File Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-(--muted)">
-                Video File
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+                Video File <span className="text-(--accent)">*</span>
               </label>
               <div
                 onClick={() => videoInputRef.current?.click()}
                 onDrop={handleDrop(handleVideoChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-8 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
               >
                 {videoFile ? (
                   <div className="flex items-center gap-3">
                     <FileVideo
-                      size={24}
+                      size={28}
                       className="text-(--accent)"
                     />
                     <div>
@@ -162,7 +240,7 @@ const UploadVideo = () => {
                         e.stopPropagation();
                         setVideoFile(null);
                       }}
-                      className="rounded-lg p-1 text-(--muted) hover:bg-(--surface-3) hover:text-(--text)"
+                      className="rounded-lg p-1.5 text-(--muted) hover:bg-(--surface-3) hover:text-(--text)"
                     >
                       <X size={16} />
                     </button>
@@ -170,14 +248,14 @@ const UploadVideo = () => {
                 ) : (
                   <>
                     <Film
-                      size={32}
+                      size={36}
                       className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
                     />
-                    <span className="text-sm text-(--muted)">
-                      Click or drag & drop your video
+                    <span className="text-sm font-medium text-(--text)">
+                      Click or drag & drop video file
                     </span>
-                    <span className="mt-1 text-xs text-(--muted-strong)">
-                      MP4, MOV, AVI up to 500MB
+                    <span className="mt-1 text-xs text-(--muted)">
+                      MP4, WEBM, MOV up to 100MB
                     </span>
                   </>
                 )}
@@ -196,37 +274,37 @@ const UploadVideo = () => {
 
             {/* Thumbnail Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-(--muted)">
-                Thumbnail
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+                Thumbnail Image <span className="text-(--accent)">*</span>
               </label>
               <div
                 onClick={() => thumbnailInputRef.current?.click()}
                 onDrop={handleDrop(handleThumbnailChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-8 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
               >
                 {thumbnailPreview ? (
                   <div className="flex flex-col items-center gap-3">
                     <img
                       src={thumbnailPreview}
                       alt="Thumbnail preview"
-                      className="h-28 w-auto rounded-lg object-cover shadow-md"
+                      className="h-32 w-auto rounded-xl object-cover shadow-lg"
                     />
                     <span className="text-xs text-(--muted)">
-                      Click or drag to change
+                      Click or drag to change thumbnail
                     </span>
                   </div>
                 ) : (
                   <>
                     <ImagePlus
-                      size={32}
+                      size={36}
                       className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
                     />
-                    <span className="text-sm text-(--muted)">
-                      Click or drag & drop thumbnail
+                    <span className="text-sm font-medium text-(--text)">
+                      Click or drag & drop thumbnail image
                     </span>
-                    <span className="mt-1 text-xs text-(--muted-strong)">
-                      PNG, JPG, WebP recommended 1280×720
+                    <span className="mt-1 text-xs text-(--muted)">
+                      PNG, JPG, WebP (1280×720 recommended)
                     </span>
                   </>
                 )}
@@ -253,12 +331,12 @@ const UploadVideo = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer shadow-lg shadow-(--accent-soft)"
             >
               {loading ? (
                 <>
                   <Spinner size={16} />
-                  <span>Uploading...</span>
+                  <span>Uploading to Cloudinary...</span>
                 </>
               ) : (
                 <>

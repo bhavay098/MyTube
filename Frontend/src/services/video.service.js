@@ -6,22 +6,38 @@ export const getAllVideos = async ({
   query = "",
   sortBy = "createdAt",
   sortType = "desc",
+  userId = "",
+  category = "",
+  duration = "",
 } = {}) => {
-  const response = await axiosInstance.get("/videos", {
-    params: {
-      page,
-      limit,
-      query,
-      sortBy,
-      sortType,
-    },
-  });
+  const params = {
+    page,
+    limit,
+    query,
+    sortBy,
+    sortType,
+  };
 
+  if (userId) params.userId = userId;
+  if (category && category !== "All") params.category = category;
+  if (duration) params.duration = duration;
+
+  const response = await axiosInstance.get("/videos", { params });
   return response.data.data;
 };
 
 export const getVideoById = async (videoId) => {
   const response = await axiosInstance.get(`/videos/${videoId}`);
+  return response.data.data;
+};
+
+export const getRelatedVideos = async (videoId) => {
+  const response = await axiosInstance.get(`/videos/related/${videoId}`);
+  return response.data.data;
+};
+
+export const getTrendingVideos = async () => {
+  const response = await axiosInstance.get("/videos/feed/trending");
   return response.data.data;
 };
 

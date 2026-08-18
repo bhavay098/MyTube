@@ -7,23 +7,23 @@ import {
     getUserPlaylists,
     removeVideoFromPlaylist,
     updatePlaylist,
-} from "../controllers/playlist.controller.js"
-import { verifyJWT } from "../middlewares/auth.middleware.js"
+} from "../controllers/playlist.controller.js";
+import { optionalJWT, verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+// Public / optional auth read routes
+router.route("/user/:userId").get(optionalJWT, getUserPlaylists);
+router.route("/:playlistId").get(optionalJWT, getPlaylistById);
 
-router.route("/").post(createPlaylist)
+// Secured mutate routes
+router.route("/").post(verifyJWT, createPlaylist);
 
 router.route("/:playlistId")
-    .get(getPlaylistById)
-    .patch(updatePlaylist)
-    .delete(deletePlaylist);
+    .patch(verifyJWT, updatePlaylist)
+    .delete(verifyJWT, deletePlaylist);
 
-router.route("/add/:videoId/:playlistId").patch(addVideoToPlaylist);
-router.route("/remove/:videoId/:playlistId").patch(removeVideoFromPlaylist);
+router.route("/add/:videoId/:playlistId").patch(verifyJWT, addVideoToPlaylist);
+router.route("/remove/:videoId/:playlistId").patch(verifyJWT, removeVideoFromPlaylist);
 
-router.route("/user/:userId").get(getUserPlaylists);
-
-export default router
+export default router;
