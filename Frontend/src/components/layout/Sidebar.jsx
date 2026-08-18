@@ -102,7 +102,7 @@ const MobileSidebarDrawer = ({ open, onClose }) => {
       >
         <div className="flex items-center justify-between border-b border-(--border) px-4 py-4">
           <div>
-            <div className="text-base font-extrabold tracking-[0.12em]">
+            <div className="text-base font-bold tracking-tight">
               <span className="text-(--accent)">My</span>
               <span>Tube</span>
             </div>

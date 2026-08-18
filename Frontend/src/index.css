@@ -87,6 +87,12 @@
 
 html {
   scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -94,9 +100,10 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: inherit;
+  letter-spacing: inherit;
+  font-feature-settings: inherit;
+  line-height: 1.5;
   transition:
     background-color 0.25s ease,
     color 0.25s ease;
@@ -117,6 +124,8 @@ textarea,
 select {
   font-family: inherit;
   font-size: inherit;
+  letter-spacing: inherit;
+  font-feature-settings: inherit;
 }
 
 button {

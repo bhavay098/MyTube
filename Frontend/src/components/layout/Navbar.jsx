@@ -90,7 +90,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
 
           <Link
             to="/"
-            className="flex items-center gap-0.5 text-xl font-extrabold tracking-[0.12em] sm:text-2xl"
+            className="flex items-center gap-0.5 text-xl font-bold tracking-tight sm:text-2xl"
           >
             <span className="text-(--accent)">My</span>
             <span className="text-(--text)">Tube</span>

@@ -11,7 +11,7 @@ const AuthLayout = ({ title, subtitle, children }) => {
         <div className="mb-8 text-center">
           <Link
             to="/"
-            className="mb-6 inline-block text-2xl font-extrabold tracking-[0.12em]"
+            className="mb-6 inline-block text-2xl font-bold tracking-tight"
           >
             <span className="text-(--accent)">My</span>
             <span className="text-(--text)">Tube</span>
@@ -20,7 +20,7 @@ const AuthLayout = ({ title, subtitle, children }) => {
 
         <div className="rounded-3xl border border-(--border) bg-(--surface) p-8 shadow-(--shadow)">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-(--text)">{title}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-(--text)">{title}</h1>
             <p className="mt-2 text-sm text-(--muted)">{subtitle}</p>
           </div>
 

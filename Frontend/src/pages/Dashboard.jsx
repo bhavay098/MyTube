@@ -103,7 +103,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <Layout>
-        <h1 className="mb-6 text-2xl font-bold text-(--text)">
+        <h1 className="mb-6 text-2xl font-semibold tracking-tight text-(--text)">
           Creator Dashboard
         </h1>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -131,7 +131,7 @@ const Dashboard = () => {
               <BarChart3 size={20} className="text-(--accent)" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-(--text)">
+              <h1 className="text-2xl font-semibold tracking-tight text-(--text)">
                 Creator Studio Dashboard
               </h1>
               <p className="text-xs text-(--muted)">
@@ -142,7 +142,7 @@ const Dashboard = () => {
 
           <Link
             to="/upload"
-            className="inline-flex items-center gap-2 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-(--accent-strong) shadow-md shadow-(--accent-soft)"
+            className="inline-flex items-center gap-2 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all hover:bg-(--accent-strong) shadow-md shadow-(--accent-soft)"
           >
             <Play size={14} />
             <span>Upload New Video</span>
@@ -169,10 +169,10 @@ const Dashboard = () => {
                   >
                     <Icon size={20} />
                   </div>
-                  <p className="text-2xl font-black tracking-tight text-(--text)">
+                  <p className="text-2xl font-bold tracking-tight text-(--text) tabular-nums">
                     {value.toLocaleString()}
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-(--muted)">{stat.label}</p>
+                  <p className="mt-1 text-xs font-medium text-(--muted)">{stat.label}</p>
                 </div>
               </div>
             );
@@ -184,7 +184,7 @@ const Dashboard = () => {
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <Video size={18} className="text-(--accent)" />
-              <h2 className="text-lg font-bold text-(--text)">Uploaded Content ({videos.length})</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-(--text)">Uploaded Content ({videos.length})</h2>
             </div>
           </div>
 
@@ -200,7 +200,7 @@ const Dashboard = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-(--border) text-xs font-bold uppercase tracking-wider text-(--muted)">
+                  <tr className="border-b border-(--border) text-xs font-medium uppercase tracking-wider text-(--muted)">
                     <th className="pb-3 pr-4">Video</th>
                     <th className="pb-3 pr-4">Category</th>
                     <th className="pb-3 pr-4">Views</th>
@@ -230,7 +230,7 @@ const Dashboard = () => {
                           ) : (
                             <div className="h-10 w-16 rounded-xl bg-(--surface-2)" />
                           )}
-                          <span className="line-clamp-1 max-w-xs text-sm font-semibold text-(--text) group-hover:text-(--accent) transition-colors">
+                          <span className="line-clamp-1 max-w-xs text-sm font-medium text-(--text) group-hover:text-(--accent) transition-colors">
                             {video.title}
                           </span>
                         </Link>
@@ -251,7 +251,7 @@ const Dashboard = () => {
                           type="button"
                           onClick={() => handleTogglePublish(video._id)}
                           disabled={togglingId === video._id}
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${
+                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
                             video.isPublished
                               ? "bg-(--success-soft) text-(--success) hover:bg-(--warning-soft) hover:text-(--warning)"
                               : "bg-(--warning-soft) text-(--warning) hover:bg-(--success-soft) hover:text-(--success)"
@@ -269,7 +269,7 @@ const Dashboard = () => {
                       <td className="py-3.5 text-right">
                         <Link
                           to={`/video/${video._id}`}
-                          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-(--muted) hover:bg-(--surface-2) hover:text-(--accent)"
+                          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-(--muted) hover:bg-(--surface-2) hover:text-(--accent)"
                         >
                           <ExternalLink size={13} />
                           <span>View</span>

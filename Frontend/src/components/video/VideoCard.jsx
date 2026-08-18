@@ -40,25 +40,25 @@ const VideoCard = ({ video }) => {
 
         {/* Duration badge */}
         {duration && (
-          <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+          <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
             {duration}
           </span>
         )}
       </div>
 
-      <div className="mt-4 flex gap-3">
+      <div className="mt-3.5 flex gap-3">
         <img
           src={video?.owner?.avatar}
           alt={video?.owner?.username}
-          className="h-10 w-10 shrink-0 rounded-full border border-(--border) object-cover"
+          className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full border border-(--border) object-cover"
         />
 
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-[15px] font-semibold leading-6 tracking-tight text-(--text)">
+          <h3 className="line-clamp-2 text-sm sm:text-[15px] font-medium leading-snug tracking-tight text-(--text)">
             {video?.title}
           </h3>
 
-          <p className="mt-1 text-sm font-medium text-(--muted) transition-colors group-hover:text-(--accent)">
+          <p className="mt-1 text-xs sm:text-sm text-(--muted) transition-colors group-hover:text-(--accent)">
             {video?.owner?.fullName}
           </p>
 

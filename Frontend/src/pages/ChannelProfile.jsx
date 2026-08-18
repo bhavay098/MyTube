@@ -145,13 +145,13 @@ const ChannelProfile = () => {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-xl font-bold text-(--text)">Channel not found</p>
+          <p className="text-xl font-semibold tracking-tight text-(--text)">Channel not found</p>
           <p className="mt-2 text-sm text-(--muted)">
             This channel may not exist or has been removed.
           </p>
           <Link
             to="/explore"
-            className="mt-5 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-(--accent-strong)"
+            className="mt-5 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-(--accent-strong)"
           >
             Explore Channels
           </Link>
@@ -232,13 +232,13 @@ const ChannelProfile = () => {
                 <div className="absolute inset-y-0 right-0 flex w-24 items-center justify-center bg-black/70 backdrop-blur-xs text-white">
                   <div className="text-center">
                     <ListMusic size={20} className="mx-auto" />
-                    <span className="mt-1 block text-xs font-bold">
+                    <span className="mt-1 block text-xs font-semibold">
                       {playlist.videos?.length || 0}
                     </span>
                   </div>
                 </div>
               </div>
-              <h3 className="mt-3 font-bold text-(--text) group-hover:text-(--accent) transition-colors">
+              <h3 className="mt-3 font-semibold text-sm sm:text-base text-(--text) group-hover:text-(--accent) transition-colors">
                 {playlist.name}
               </h3>
               <p className="mt-1 line-clamp-1 text-xs text-(--muted)">
@@ -281,7 +281,7 @@ const ChannelProfile = () => {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-(--text)">
+                    <span className="text-sm font-semibold text-(--text)">
                       {profile.fullName}
                     </span>
                     <span className="text-xs text-(--muted)">
@@ -317,14 +317,14 @@ const ChannelProfile = () => {
     return (
       <div className="max-w-2xl rounded-3xl border border-(--border) bg-(--surface) p-6 space-y-6">
         <div>
-          <h3 className="text-base font-bold text-(--text)">Description / Bio</h3>
+          <h3 className="text-base font-semibold tracking-tight text-(--text)">Description / Bio</h3>
           <p className="mt-2 text-sm leading-relaxed text-(--muted)">
             {profile.bio || `${profile.fullName} hasn't added a channel description yet.`}
           </p>
         </div>
 
         <div className="border-t border-(--border) pt-5 space-y-3">
-          <h3 className="text-base font-bold text-(--text)">Channel Details</h3>
+          <h3 className="text-base font-semibold tracking-tight text-(--text)">Channel Details</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2.5 text-(--muted)">
               <Calendar size={16} className="text-(--accent)" />
@@ -363,10 +363,10 @@ const ChannelProfile = () => {
                 className="h-28 w-28 rounded-full border-4 border-(--bg) bg-(--surface) object-cover shadow-2xl"
               />
               <div className="mb-2">
-                <h1 className="text-2xl font-black text-white sm:text-3xl drop-shadow-md">
+                <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl drop-shadow-md">
                   {profile.fullName}
                 </h1>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-white/80">
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-medium text-white/80">
                   <span>@{profile.username}</span>
                   <span>•</span>
                   <span>{profile.subscribersCount ?? 0} subscribers</span>
@@ -380,7 +380,7 @@ const ChannelProfile = () => {
               {isOwnProfile ? (
                 <Link
                   to="/settings"
-                  className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface)/90 backdrop-blur-md px-5 py-2.5 text-xs font-bold text-(--text) transition-all hover:bg-(--surface-2)"
+                  className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface)/90 backdrop-blur-md px-5 py-2.5 text-xs font-semibold text-(--text) transition-all hover:bg-(--surface-2)"
                 >
                   Customize Channel
                 </Link>
@@ -388,7 +388,7 @@ const ChannelProfile = () => {
                 <button
                   onClick={handleSubscribeToggle}
                   disabled={subscribing}
-                  className={`inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer shadow-lg ${
+                  className={`inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-xs font-semibold transition-all duration-200 cursor-pointer shadow-lg ${
                     profile.isSubscribed
                       ? "border border-white/20 bg-white/20 text-white backdrop-blur-md hover:bg-(--error) hover:border-(--error)"
                       : "bg-(--accent) text-white hover:bg-(--accent-strong)"
@@ -424,7 +424,7 @@ const ChannelProfile = () => {
                 key={tab.id}
                 type="button"
                 onClick={() => handleTabChange(tab.id)}
-                className={`relative inline-flex items-center gap-2 px-5 py-3.5 text-sm font-semibold transition-colors cursor-pointer ${
+                className={`relative inline-flex items-center gap-2 px-5 py-3.5 text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? "text-(--accent)"
                     : "text-(--muted) hover:text-(--text)"

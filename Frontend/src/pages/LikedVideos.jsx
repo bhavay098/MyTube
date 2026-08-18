@@ -38,7 +38,7 @@ const LikedVideos = () => {
             <Heart size={20} className="text-(--accent)" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-(--text)">Liked Videos</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Liked Videos</h1>
             <p className="text-xs text-(--muted)">
               Videos you have liked across the platform
             </p>

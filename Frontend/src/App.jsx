@@ -26,7 +26,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 const SplashScreen = () => (
   <div className="flex min-h-screen flex-col items-center justify-center bg-(--bg)">
     <div className="animate-fade-in-scale flex flex-col items-center">
-      <div className="mb-6 text-4xl font-extrabold tracking-[0.12em]">
+      <div className="mb-6 text-4xl font-bold tracking-tight">
         <span className="text-(--accent)">My</span>
         <span className="text-(--text)">Tube</span>
       </div>

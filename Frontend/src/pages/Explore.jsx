@@ -118,11 +118,11 @@ const Explore = () => {
         {/* Header Banner */}
         <div className="relative overflow-hidden rounded-3xl border border-(--border) bg-gradient-to-r from-(--surface) via-(--surface-2) to-(--surface) p-6 sm:p-8 shadow-(--shadow-sm)">
           <div className="relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-semibold text-(--accent)">
+            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-medium text-(--accent)">
               <Compass size={14} />
               <span>Discover & Explore</span>
             </div>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-(--text) sm:text-3xl">
+            <h1 className="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-(--text)">
               Explore All Videos
             </h1>
             <p className="mt-2 text-sm text-(--muted) sm:text-base">
@@ -140,7 +140,7 @@ const Explore = () => {
                   key={cat.label}
                   type="button"
                   onClick={() => handleCategoryChange(cat.label)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200 cursor-pointer ${
                     isActive
                       ? "bg-(--accent) text-white shadow-md shadow-(--accent-soft)"
                       : "border border-(--border) bg-(--surface) text-(--muted) hover:border-(--accent) hover:text-(--text)"
@@ -215,7 +215,7 @@ const Explore = () => {
         ) : (
           <div className="animate-fade-in">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wider text-(--muted-strong)">
+              <p className="text-xs font-medium uppercase tracking-wider text-(--muted-strong)">
                 Showing {videos.length} videos {activeCategory !== "All" && `in ${activeCategory}`}
               </p>
             </div>

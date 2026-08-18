@@ -43,7 +43,7 @@ const Subscriptions = () => {
   if (loading) {
     return (
       <Layout>
-        <h1 className="mb-6 text-2xl font-bold text-(--text)">Subscriptions</h1>
+        <h1 className="mb-6 text-2xl font-semibold tracking-tight text-(--text)">Subscriptions</h1>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {[1, 2].map((i) => (
             <div
@@ -70,13 +70,13 @@ const Subscriptions = () => {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent-soft)">
             <Users size={20} className="text-(--accent)" />
           </div>
-          <h1 className="text-2xl font-bold text-(--text)">Subscriptions</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Subscriptions</h1>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Subscribers */}
           <section className="rounded-2xl border border-(--border) bg-(--surface) p-5">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-(--text)">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
               <Users size={18} className="text-(--accent)" />
               Your Subscribers
               {subscribers.length > 0 && (
@@ -128,7 +128,7 @@ const Subscriptions = () => {
 
           {/* Subscribed channels */}
           <section className="rounded-2xl border border-(--border) bg-(--surface) p-5">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-(--text)">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
               <UserCheck size={18} className="text-(--accent)" />
               Channels You Follow
               {subscriptions.length > 0 && (

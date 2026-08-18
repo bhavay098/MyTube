@@ -114,7 +114,7 @@ const Settings = () => {
             <SettingsIcon size={20} className="text-(--accent)" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-(--text)">Settings</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Settings</h1>
             <p className="text-sm text-(--muted)">
               Manage your account and channel preferences
             </p>
@@ -123,7 +123,7 @@ const Settings = () => {
 
         {/* Profile Images */}
         <section className="mb-6 rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-(--text)">
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
             <Camera size={18} className="text-(--accent)" />
             Profile Images
           </h2>
@@ -157,7 +157,7 @@ const Settings = () => {
                   className="hidden"
                 />
               </div>
-              <span className="text-xs font-semibold text-(--muted)">Avatar</span>
+              <span className="text-xs font-medium text-(--muted)">Avatar</span>
             </div>
 
             {/* Cover */}
@@ -183,7 +183,7 @@ const Settings = () => {
                   {coverLoading ? (
                     <Spinner size={20} className="text-white" />
                   ) : (
-                    <div className="flex items-center gap-2 rounded-xl bg-black/60 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-md">
+                    <div className="flex items-center gap-2 rounded-xl bg-black/60 px-3.5 py-2 text-xs font-medium text-white backdrop-blur-md">
                       <Camera size={14} />
                       Change Banner
                     </div>
@@ -210,12 +210,12 @@ const Settings = () => {
             onSubmit={handleAccountSubmit}
             className="space-y-4 rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)"
           >
-            <h2 className="flex items-center gap-2 text-lg font-bold text-(--text)">
+            <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
               <User size={18} className="text-(--accent)" />
               Account & Bio
             </h2>
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Full Name
               </label>
               <input
@@ -231,7 +231,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Email
               </label>
               <input
@@ -247,7 +247,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Channel Bio / Description
               </label>
               <textarea
@@ -266,7 +266,7 @@ const Settings = () => {
             <button
               type="submit"
               disabled={accountLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
             >
               {accountLoading ? <Spinner size={14} /> : <Save size={14} />}
               Save Changes
@@ -278,12 +278,12 @@ const Settings = () => {
             onSubmit={handlePasswordSubmit}
             className="space-y-4 rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)"
           >
-            <h2 className="flex items-center gap-2 text-lg font-bold text-(--text)">
+            <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
               <Lock size={18} className="text-(--accent)" />
               Security
             </h2>
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Current Password
               </label>
               <input
@@ -300,7 +300,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 New Password
               </label>
               <input
@@ -319,7 +319,7 @@ const Settings = () => {
             <button
               type="submit"
               disabled={passwordLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
             >
               {passwordLoading ? <Spinner size={14} /> : <Lock size={14} />}
               Update Password

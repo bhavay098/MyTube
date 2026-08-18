@@ -88,7 +88,7 @@ const WatchHistory = () => {
               <History size={20} className="text-(--accent)" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-(--text)">Watch History</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Watch History</h1>
               <p className="text-xs text-(--muted)">
                 Manage videos you have watched
               </p>
@@ -99,7 +99,7 @@ const WatchHistory = () => {
             <button
               type="button"
               onClick={() => setClearDialogOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-(--border) bg-(--surface) px-4 py-2 text-xs font-semibold text-(--muted) transition-colors hover:border-(--error) hover:bg-(--error-soft) hover:text-(--error) cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl border border-(--border) bg-(--surface) px-4 py-2 text-xs font-medium text-(--muted) transition-colors hover:border-(--error) hover:bg-(--error-soft) hover:text-(--error) cursor-pointer"
             >
               <Trash2 size={14} />
               <span>Clear All History</span>
@@ -143,7 +143,7 @@ const WatchHistory = () => {
                       </div>
 
                       {duration && (
-                        <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+                        <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
                           {duration}
                         </span>
                       )}
@@ -170,12 +170,12 @@ const WatchHistory = () => {
 
                     <div className="min-w-0 flex-1">
                       <Link to={`/video/${video._id}`}>
-                        <h3 className="line-clamp-2 text-[15px] font-semibold leading-6 tracking-tight text-(--text) hover:text-(--accent) transition-colors">
+                        <h3 className="line-clamp-2 text-sm sm:text-[15px] font-medium leading-snug tracking-tight text-(--text) hover:text-(--accent) transition-colors">
                           {video?.title}
                         </h3>
                       </Link>
 
-                      <p className="mt-1 text-sm font-medium text-(--muted)">
+                      <p className="mt-1 text-xs sm:text-sm font-normal text-(--muted)">
                         {video?.owner?.fullName}
                       </p>
 

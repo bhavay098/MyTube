@@ -167,7 +167,7 @@ const Tweets = () => {
               <MessageSquareText size={20} className="text-(--accent)" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-(--text)">Community</h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Community</h1>
               <p className="text-xs text-(--muted)">
                 Explore thoughts and updates from creators
               </p>
@@ -179,7 +179,7 @@ const Tweets = () => {
             <button
               type="button"
               onClick={() => handleTabSwitch("feed")}
-              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                 activeTab === "feed"
                   ? "bg-(--accent) text-white"
                   : "text-(--muted) hover:text-(--text)"
@@ -192,7 +192,7 @@ const Tweets = () => {
               <button
                 type="button"
                 onClick={() => handleTabSwitch("my_posts")}
-                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                   activeTab === "my_posts"
                     ? "bg-(--accent) text-white"
                     : "text-(--muted) hover:text-(--text)"
@@ -236,7 +236,7 @@ const Tweets = () => {
                       disabled={
                         posting || !tweetText.trim() || isOverLimit
                       }
-                      className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer shadow-md shadow-(--accent-soft)"
+                      className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer shadow-md shadow-(--accent-soft)"
                     >
                       {posting ? (
                         <Spinner size={14} />
@@ -253,7 +253,7 @@ const Tweets = () => {
         ) : (
           <div className="rounded-2xl border border-(--border) bg-(--surface) p-4 text-center">
             <p className="text-xs text-(--muted)">
-              <Link to="/login" className="font-bold text-(--accent) hover:underline">
+              <Link to="/login" className="font-semibold text-(--accent) hover:underline">
                 Sign in
               </Link>{" "}
               to create community posts and interact with creators.
@@ -293,7 +293,7 @@ const Tweets = () => {
                     <div className="flex items-center gap-2">
                       <Link
                         to={`/channel/${author?.username}`}
-                        className="text-sm font-bold text-(--text) hover:text-(--accent) transition-colors"
+                        className="text-sm font-semibold text-(--text) hover:text-(--accent) transition-colors"
                       >
                         {author?.fullName || author?.username}
                       </Link>
@@ -315,7 +315,7 @@ const Tweets = () => {
                     <div className="mt-3.5 flex items-center gap-2">
                       <button
                         onClick={() => handleLike(tweet._id)}
-                        className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                           tweet.isLiked
                             ? "bg-(--accent-soft) text-(--accent)"
                             : "text-(--muted) hover:bg-(--accent-soft) hover:text-(--accent)"
@@ -405,7 +405,7 @@ const Tweets = () => {
                   !editContent.trim() ||
                   editContent.length > MAX_TWEET_LENGTH
                 }
-                className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-bold text-white transition-all hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-all hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
               >
                 {editLoading && <Spinner size={14} />}
                 Save Changes

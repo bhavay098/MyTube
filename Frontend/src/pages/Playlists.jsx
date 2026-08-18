@@ -154,13 +154,13 @@ const Playlists = () => {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent-soft)">
             <ListMusic size={20} className="text-(--accent)" />
           </div>
-          <h1 className="text-2xl font-bold text-(--text)">My Playlists</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-(--text)">My Playlists</h1>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Create */}
           <section className="rounded-2xl border border-(--border) bg-(--surface) p-5">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-(--text)">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-(--text)">
               <Plus size={18} className="text-(--accent)" />
               Create Playlist
             </h2>
@@ -210,7 +210,7 @@ const Playlists = () => {
 
           {/* List */}
           <section className="rounded-2xl border border-(--border) bg-(--surface) p-5">
-            <h2 className="mb-4 text-lg font-semibold text-(--text)">
+            <h2 className="mb-4 text-lg font-semibold tracking-tight text-(--text)">
               Your Lists
             </h2>
             <div className="space-y-2">
@@ -232,12 +232,9 @@ const Playlists = () => {
                       <p className="text-sm font-medium text-(--text)">
                         {playlist.name}
                       </p>
-                      {playlist.videos?.length > 0 && (
-                        <p className="text-xs text-(--muted)">
-                          {playlist.videos.length} video
-                          {playlist.videos.length !== 1 ? "s" : ""}
-                        </p>
-                      )}
+                      <p className="text-xs text-(--muted)">
+                        {playlist.videos?.length || 0} videos
+                      </p>
                     </div>
                   </div>
 
@@ -266,7 +263,7 @@ const Playlists = () => {
                 </div>
               ))}
               {playlists.length === 0 && (
-                <p className="py-4 text-center text-sm text-(--muted)">
+                <p className="py-6 text-center text-sm text-(--muted)">
                   No playlists yet. Create your first one!
                 </p>
               )}
@@ -279,7 +276,7 @@ const Playlists = () => {
           <section className="mt-6 animate-slide-up rounded-2xl border border-(--border) bg-(--surface) p-5">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-(--text)">
+                <h2 className="text-lg font-semibold tracking-tight text-(--text)">
                   {selectedPlaylist.name}
                 </h2>
                 {selectedPlaylist.description && (

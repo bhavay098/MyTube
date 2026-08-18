@@ -119,7 +119,7 @@ const UploadVideo = () => {
             <Upload size={20} className="text-(--accent)" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-(--text)">Upload Video</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-(--text)">Upload Video</h1>
             <p className="text-sm text-(--muted)">
               Share your content with the world
             </p>
@@ -130,7 +130,7 @@ const UploadVideo = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Title <span className="text-(--accent)">*</span>
               </label>
               <input
@@ -148,7 +148,7 @@ const UploadVideo = () => {
 
             {/* Description */}
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Description <span className="text-(--accent)">*</span>
               </label>
               <textarea
@@ -168,7 +168,7 @@ const UploadVideo = () => {
             {/* Category & Tags Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-(--muted)">
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)">
                   <Folder size={13} className="text-(--accent)" />
                   Category
                 </label>
@@ -191,7 +191,7 @@ const UploadVideo = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-(--muted)">
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)">
                   <Tag size={13} className="text-(--accent)" />
                   Tags (comma separated)
                 </label>
@@ -211,7 +211,7 @@ const UploadVideo = () => {
 
             {/* Video File Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Video File <span className="text-(--accent)">*</span>
               </label>
               <div
@@ -274,7 +274,7 @@ const UploadVideo = () => {
 
             {/* Thumbnail Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-(--muted)">
+              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
                 Thumbnail Image <span className="text-(--accent)">*</span>
               </label>
               <div
@@ -331,7 +331,7 @@ const UploadVideo = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer shadow-lg shadow-(--accent-soft)"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer shadow-lg shadow-(--accent-soft)"
             >
               {loading ? (
                 <>

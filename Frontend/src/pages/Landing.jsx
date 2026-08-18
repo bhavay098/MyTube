@@ -133,7 +133,7 @@ const Landing = () => {
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             to="/"
-            className="flex items-center gap-0.5 text-2xl font-black tracking-tight sm:text-3xl"
+            className="flex items-center gap-0.5 text-2xl font-bold tracking-tight sm:text-3xl"
           >
             <span className="text-(--accent)">My</span>
             <span className="text-(--text)">Tube</span>
@@ -203,13 +203,13 @@ const Landing = () => {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-(--border-strong) bg-(--surface)/80 px-4 py-1.5 text-xs font-semibold text-(--accent) backdrop-blur-md shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-(--border-strong) bg-(--surface)/80 px-4 py-1.5 text-xs font-medium text-(--accent) backdrop-blur-md shadow-sm">
             <Sparkles size={14} className="animate-pulse" />
             <span className="tracking-wide uppercase">The Next-Gen Creator & Video Hub</span>
           </div>
 
           {/* Main Title */}
-          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
             Where Content Meets <br />
             <span className="bg-gradient-to-r from-(--accent) via-[#ff4d6a] to-(--accent-strong) bg-clip-text text-transparent">
               Community & Growth
@@ -225,7 +225,7 @@ const Landing = () => {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/register"
-              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-bold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
             >
               <span>Create Free Account</span>
               <ArrowRight size={18} />
@@ -290,7 +290,7 @@ const Landing = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-xs text-(--muted)">Engagement Rate</p>
-                  <p className="text-sm font-bold text-(--text)">99.4% Positive</p>
+                  <p className="text-sm font-semibold text-(--text)">99.4% Positive</p>
                 </div>
               </div>
 
@@ -301,7 +301,7 @@ const Landing = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-xs text-(--muted)">Creator Community</p>
-                  <p className="text-sm font-bold text-(--text)">Worldwide Audience</p>
+                  <p className="text-sm font-semibold text-(--text)">Worldwide Audience</p>
                 </div>
               </div>
             </div>
@@ -315,10 +315,10 @@ const Landing = () => {
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
-                <p className="text-3xl font-black tracking-tight text-(--accent) sm:text-4xl">
+                <p className="text-2xl font-bold tracking-tight text-(--accent) sm:text-4xl tabular-nums">
                   {stat.value}
                 </p>
-                <p className="mt-1 text-xs font-semibold text-(--muted) uppercase tracking-wider">
+                <p className="mt-1 text-xs font-medium text-(--muted) uppercase tracking-wider">
                   {stat.label}
                 </p>
               </div>
@@ -332,11 +332,11 @@ const Landing = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-semibold text-(--accent)">
+              <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-medium text-(--accent)">
                 <Tv size={14} />
                 <span>Real-Time Catalog</span>
               </div>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl text-(--text)">
+              <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-(--text)">
                 Trending on MyTube
               </h2>
               <p className="mt-2 text-sm text-(--muted) sm:text-base">
@@ -346,7 +346,7 @@ const Landing = () => {
 
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-semibold text-(--text) transition-all duration-200 hover:border-(--accent) hover:bg-(--surface-2) hover:text-(--accent) self-start md:self-auto"
+              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-medium text-(--text) transition-all duration-200 hover:border-(--accent) hover:bg-(--surface-2) hover:text-(--accent) self-start md:self-auto"
             >
               <span>View All Videos</span>
               <ArrowRight size={16} />
@@ -366,7 +366,7 @@ const Landing = () => {
               <p className="text-base text-(--muted)">No videos uploaded yet.</p>
               <Link
                 to="/register"
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white"
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-medium text-white"
               >
                 Be the first creator to upload!
               </Link>
@@ -379,11 +379,11 @@ const Landing = () => {
       <section id="features" className="border-t border-(--border) bg-(--surface)/30 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-semibold text-(--accent)">
+            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-medium text-(--accent)">
               <Sparkles size={14} />
               <span>Platform Capabilities</span>
             </div>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl text-(--text)">
+            <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-(--text)">
               Engineered for Creators & Audiences
             </h2>
             <p className="mt-2 text-sm text-(--muted) sm:text-base">
@@ -403,12 +403,12 @@ const Landing = () => {
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--accent-soft) text-(--accent) transition-transform duration-300 group-hover:scale-110">
                       <Icon size={24} />
                     </div>
-                    <span className="rounded-full border border-(--border) bg-(--surface-2) px-3 py-1 text-xs font-semibold text-(--muted)">
+                    <span className="rounded-full border border-(--border) bg-(--surface-2) px-3 py-1 text-xs font-medium text-(--muted)">
                       {feat.badge}
                     </span>
                   </div>
 
-                  <h3 className="mt-6 text-xl font-bold tracking-tight text-(--text)">
+                  <h3 className="mt-6 text-lg sm:text-xl font-semibold tracking-tight text-(--text)">
                     {feat.title}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-(--muted)">
@@ -425,7 +425,7 @@ const Landing = () => {
       <section id="how-it-works" className="border-t border-(--border) py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-(--text)">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-(--text)">
               Launch in 3 Simple Steps
             </h2>
             <p className="mt-2 text-sm text-(--muted) sm:text-base">
@@ -439,10 +439,10 @@ const Landing = () => {
                 key={i}
                 className="relative rounded-3xl border border-(--border) bg-(--surface) p-8 shadow-sm"
               >
-                <span className="text-4xl font-black text-(--accent-soft) text-(--accent)">
+                <span className="text-3xl sm:text-4xl font-bold text-(--accent)">
                   {step.num}
                 </span>
-                <h3 className="mt-4 text-lg font-bold text-(--text)">{step.title}</h3>
+                <h3 className="mt-4 text-base sm:text-lg font-semibold tracking-tight text-(--text)">{step.title}</h3>
                 <p className="mt-2 text-sm text-(--muted) leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -459,7 +459,7 @@ const Landing = () => {
             <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-(--accent-soft) blur-3xl opacity-70" />
 
             <div className="relative z-10 max-w-2xl mx-auto">
-              <h2 className="text-3xl font-black tracking-tight sm:text-5xl text-(--text)">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-(--text)">
                 Ready to Share Your Voice?
               </h2>
               <p className="mt-4 text-base text-(--muted) sm:text-lg">
@@ -469,7 +469,7 @@ const Landing = () => {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-bold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
                 >
                   <span>Get Started Now</span>
                   <ArrowRight size={18} />
@@ -477,7 +477,7 @@ const Landing = () => {
 
                 <Link
                   to="/explore"
-                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
+                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
                 >
                   <Compass size={18} />
                   <span>Browse Catalog</span>
@@ -504,7 +504,7 @@ const Landing = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight">
+              <span className="text-xl font-bold tracking-tight">
                 <span className="text-(--accent)">My</span>
                 <span className="text-(--text)">Tube</span>
               </span>

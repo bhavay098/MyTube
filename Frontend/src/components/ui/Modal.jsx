@@ -47,7 +47,7 @@ const Modal = ({ open, onClose, title, children, maxWidth = "max-w-lg" }) => {
         className={`animate-fade-in-scale relative w-full ${maxWidth} rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-2xl`}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-(--text)">{title}</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-(--text)">{title}</h2>
 
           <button
             type="button"

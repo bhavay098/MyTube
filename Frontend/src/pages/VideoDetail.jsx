@@ -96,7 +96,7 @@ const VideoDetail = () => {
       try {
         const commentsData = await getVideoComments(videoId);
         setComments(commentsData?.comments || commentsData || []);
-      } catch (err) {
+      } catch {
         setComments([]);
       }
 
@@ -104,7 +104,7 @@ const VideoDetail = () => {
         try {
           const userPlaylists = await getUserPlaylists(currentUser._id);
           setPlaylists(userPlaylists || []);
-        } catch (err) {
+        } catch {
           setPlaylists([]);
         }
       } else {
@@ -367,7 +367,7 @@ const VideoDetail = () => {
 
             {/* Video Info Card */}
             <div className="rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
-              <h1 className="text-xl font-bold tracking-tight text-(--text) sm:text-2xl">
+              <h1 className="text-xl font-semibold tracking-tight text-(--text) sm:text-2xl leading-snug">
                 {video?.title}
               </h1>
 
@@ -384,7 +384,7 @@ const VideoDetail = () => {
                   <div>
                     <Link
                       to={`/channel/${video?.owner?.username}`}
-                      className="text-base font-bold text-(--text) hover:text-(--accent) transition-colors"
+                      className="text-base font-semibold text-(--text) hover:text-(--accent) transition-colors"
                     >
                       {video?.owner?.fullName}
                     </Link>
@@ -397,7 +397,7 @@ const VideoDetail = () => {
                     <button
                       onClick={handleSubscribe}
                       disabled={subscribing}
-                      className={`ml-2 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer ${
+                      className={`ml-2 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-semibold transition-all duration-200 cursor-pointer ${
                         video?.owner?.isSubscribed
                           ? "border border-(--border) bg-(--surface-2) text-(--text) hover:border-(--error) hover:text-(--error)"
                           : "bg-(--accent) text-white hover:bg-(--accent-strong) shadow-md shadow-(--accent-soft)"
@@ -424,7 +424,7 @@ const VideoDetail = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={handleLikeVideo}
-                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium transition-all duration-200 cursor-pointer ${
                       video?.isLiked
                         ? "border-(--accent) bg-(--accent-soft) text-(--accent)"
                         : "border-(--border) bg-(--surface-2) text-(--text) hover:border-(--accent) hover:text-(--accent)"
@@ -439,7 +439,7 @@ const VideoDetail = () => {
 
                   <button
                     onClick={handleShare}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-semibold text-(--text) transition-all duration-200 hover:border-(--accent) hover:text-(--accent) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:border-(--accent) hover:text-(--accent) cursor-pointer"
                   >
                     <Share2 size={14} />
                     <span>Share</span>
@@ -452,7 +452,7 @@ const VideoDetail = () => {
                         onChange={(event) =>
                           setSelectedPlaylistId(event.target.value)
                         }
-                        className="rounded-full border border-(--border) bg-(--surface-2) px-3 py-2 text-xs font-semibold text-(--text) outline-none"
+                        className="rounded-full border border-(--border) bg-(--surface-2) px-3 py-2 text-xs font-medium text-(--text) outline-none"
                       >
                         <option value="">Save to playlist</option>
                         {playlists.map((playlist) => (
@@ -475,7 +475,7 @@ const VideoDetail = () => {
 
               {/* Description box */}
               <div className="mt-5 rounded-2xl bg-(--surface-2) p-4">
-                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-(--muted-strong)">
+                <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-(--muted-strong)">
                   <span>{video?.views?.toLocaleString() ?? 0} views</span>
                   {video?.createdAt && (
                     <>
@@ -502,7 +502,7 @@ const VideoDetail = () => {
                 <div className="mt-5 flex flex-wrap gap-2 border-t border-(--border) pt-4">
                   <button
                     onClick={handleTogglePublish}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-semibold text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
                   >
                     {video?.isPublished ? (
                       <EyeOff size={14} />
@@ -513,14 +513,14 @@ const VideoDetail = () => {
                   </button>
                   <button
                     onClick={openEditModal}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-semibold text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
                   >
                     <Pencil size={14} />
                     Edit
                   </button>
                   <button
                     onClick={() => setDeleteDialogOpen(true)}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--error) px-4 py-2 text-xs font-semibold text-(--error) transition-all duration-200 hover:bg-(--error-soft) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--error) px-4 py-2 text-xs font-medium text-(--error) transition-all duration-200 hover:bg-(--error-soft) cursor-pointer"
                   >
                     <Trash2 size={14} />
                     Delete
@@ -531,7 +531,7 @@ const VideoDetail = () => {
 
             {/* Comments Section */}
             <section className="rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
-              <h2 className="text-lg font-bold text-(--text)">
+              <h2 className="text-lg font-semibold tracking-tight text-(--text)">
                 {comments.length} Comment{comments.length !== 1 ? "s" : ""}
               </h2>
 
@@ -555,7 +555,7 @@ const VideoDetail = () => {
                     <button
                       type="submit"
                       disabled={!commentText.trim() || postingComment}
-                      className="flex items-center gap-1.5 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer"
+                      className="flex items-center gap-1.5 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer"
                     >
                       {postingComment ? <Spinner size={14} /> : <Send size={14} />}
                       Post
@@ -590,7 +590,7 @@ const VideoDetail = () => {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-(--text)">
+                        <span className="text-sm font-medium text-(--text)">
                           {comment?.owner?.fullName || comment?.owner?.username || "User"}
                         </span>
                         <span className="text-xs text-(--muted)">
@@ -649,7 +649,7 @@ const VideoDetail = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-(--accent)" />
-              <h2 className="text-base font-bold text-(--text)">Related Videos</h2>
+              <h2 className="text-base font-semibold tracking-tight text-(--text)">Related Videos</h2>
             </div>
 
             <div className="space-y-3">
@@ -670,17 +670,17 @@ const VideoDetail = () => {
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       {duration && (
-                        <span className="absolute bottom-1.5 right-1.5 rounded-md bg-black/80 px-1 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                        <span className="absolute bottom-1.5 right-1.5 rounded-md bg-black/80 px-1 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
                           {duration}
                         </span>
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1 py-0.5">
-                      <h3 className="line-clamp-2 text-xs font-bold leading-4 text-(--text) group-hover:text-(--accent) transition-colors">
+                      <h3 className="line-clamp-2 text-xs sm:text-sm font-medium leading-snug text-(--text) group-hover:text-(--accent) transition-colors">
                         {rVideo?.title}
                       </h3>
-                      <p className="mt-1 text-[11px] font-medium text-(--muted) truncate">
+                      <p className="mt-1 text-xs text-(--muted) truncate">
                         {rVideo?.owner?.fullName || rVideo?.owner?.username}
                       </p>
                       <div className="mt-1 flex items-center gap-1 text-[10px] text-(--muted-strong)">
