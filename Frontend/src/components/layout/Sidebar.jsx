@@ -1,5 +1,6 @@
 import {
   Home,
+  Compass,
   Heart,
   History,
   Folder,
@@ -18,6 +19,11 @@ const menuItems = [
     title: "Home",
     icon: Home,
     to: "/",
+  },
+  {
+    title: "Explore",
+    icon: Compass,
+    to: "/explore",
   },
   {
     title: "Liked Videos",

@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import Home from "./pages/Home.jsx";
+import Landing from "./pages/Landing.jsx";
+import Explore from "./pages/Explore.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VideoDetail from "./pages/VideoDetail.jsx";
@@ -41,6 +43,7 @@ const SplashScreen = () => (
 const App = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [authHydrated, setAuthHydrated] = useState(false);
 
   useEffect(() => {
@@ -78,7 +81,12 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route
+        path="/"
+        element={isAuthenticated ? <Home /> : <Landing />}
+      />
+
+      <Route path="/explore" element={<Explore />} />
 
       <Route path="/login" element={<Login />} />
 
