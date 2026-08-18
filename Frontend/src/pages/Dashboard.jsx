@@ -142,7 +142,7 @@ const Dashboard = () => {
 
           <Link
             to="/upload"
-            className="inline-flex items-center gap-2 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all hover:bg-(--accent-strong) shadow-md shadow-(--accent-soft)"
+            className="inline-flex items-center gap-2 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-(--accent-strong) shadow-md shadow-(--accent-soft)"
           >
             <Play size={14} />
             <span>Upload New Video</span>
@@ -158,7 +158,7 @@ const Dashboard = () => {
             return (
               <div
                 key={stat.key}
-                className="relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-5 transition-all duration-200 hover:border-(--border-strong) hover:shadow-(--shadow-sm)"
+                className="relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-5 transition-colors duration-200 hover:border-(--border-strong) hover:shadow-(--shadow-sm)"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} pointer-events-none`}

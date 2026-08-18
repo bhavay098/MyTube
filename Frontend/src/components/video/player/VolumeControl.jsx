@@ -37,7 +37,7 @@ const VolumeControl = ({
       </button>
 
       {/* Slide-out Volume Slider */}
-      <div className="flex w-0 items-center overflow-hidden transition-all duration-200 ease-out group-hover/volume:w-20 group-focus-within/volume:w-20">
+      <div className="flex w-0 items-center overflow-hidden transition-[width] duration-200 ease-out group-hover/volume:w-20 group-focus-within/volume:w-20">
         <input
           type="range"
           min="0"

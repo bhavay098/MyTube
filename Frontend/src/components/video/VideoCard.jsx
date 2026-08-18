@@ -22,7 +22,7 @@ const VideoCard = ({ video }) => {
   return (
     <Link
       to={`/video/${video?._id}`}
-      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:shadow-(--shadow)"
+      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:shadow-(--shadow)"
     >
       <div className="relative aspect-video overflow-hidden rounded-[1.1rem] bg-(--surface-2)">
         <img
@@ -32,8 +32,8 @@ const VideoCard = ({ video }) => {
         />
 
         {/* Hover play overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/30">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/30">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-transform transition-opacity duration-300 group-hover:scale-100 group-hover:opacity-100">
             <Play size={20} className="ml-0.5 text-black" fill="black" />
           </div>
         </div>

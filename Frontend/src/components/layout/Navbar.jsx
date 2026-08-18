@@ -80,7 +80,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
           <button
             type="button"
             onClick={onMenuToggle}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-all duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) md:hidden"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation-drawer"
@@ -99,18 +99,24 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
 
         {/* Desktop search */}
         <div className="relative hidden w-full max-w-180 items-center md:flex">
+          <label htmlFor="navbar-desktop-search" className="sr-only">
+            Search videos
+          </label>
           <input
+            id="navbar-desktop-search"
             type="text"
             placeholder="Search videos..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
           />
 
           <button
+            type="button"
             onClick={handleSearch}
-            className="flex h-10.5 w-16 items-center justify-center rounded-r-full border border-l-0 border-(--border) bg-(--surface) transition-all duration-200 hover:bg-(--surface-2)"
+            aria-label="Search"
+            className="flex h-10.5 w-16 items-center justify-center rounded-r-full border border-l-0 border-(--border) bg-(--surface) transition-colors duration-200 hover:bg-(--surface-2)"
           >
             <Search className="text-(--muted)" size={18} />
           </button>
@@ -120,7 +126,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
           <button
             type="button"
             onClick={() => dispatch(toggleTheme())}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-all duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
             aria-label={`Switch to ${
               theme === "dark" ? "light" : "dark"
             } theme`}
@@ -133,14 +139,14 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
             <>
               <Link
                 to="/login"
-                className="hidden rounded-full border border-(--border) px-3 py-2 text-sm font-medium text-(--text) transition-all duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) sm:inline-flex sm:px-5"
+                className="hidden rounded-full border border-(--border) px-3 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) sm:inline-flex sm:px-5"
               >
                 Log in
               </Link>
 
               <Link
                 to="/register"
-                className="rounded-full bg-(--accent) px-3 py-2 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong) sm:px-5"
+                className="rounded-full bg-(--accent) px-3 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong) sm:px-5"
               >
                 Sign up
               </Link>
@@ -150,7 +156,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
               <button
                 type="button"
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-2 rounded-full border border-(--border) py-1 pl-1 pr-3 transition-all duration-200 hover:border-(--accent) hover:bg-(--surface-2)"
+                className="flex items-center gap-2 rounded-full border border-(--border) py-1 pl-1 pr-3 transition-colors duration-200 hover:border-(--accent) hover:bg-(--surface-2)"
               >
                 <img
                   src={user?.avatar}
@@ -227,18 +233,24 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
       {/* Mobile search */}
       <div className="border-t border-(--border) px-4 py-3 sm:px-6 md:hidden">
         <div className="relative flex w-full items-center">
+          <label htmlFor="navbar-mobile-search" className="sr-only">
+            Search videos
+          </label>
           <input
+            id="navbar-mobile-search"
             type="text"
             placeholder="Search videos..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
           />
 
           <button
+            type="button"
             onClick={handleSearch}
-            className="flex h-10.5 w-14 items-center justify-center rounded-r-full border border-l-0 border-(--border) bg-(--surface) transition-all duration-200 hover:bg-(--surface-2)"
+            aria-label="Search"
+            className="flex h-10.5 w-14 items-center justify-center rounded-r-full border border-l-0 border-(--border) bg-(--surface) transition-colors duration-200 hover:bg-(--surface-2)"
           >
             <Search className="text-(--muted)" size={18} />
           </button>

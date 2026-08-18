@@ -25,6 +25,82 @@ import { getAllVideos } from "../services/video.service.js";
 import VideoCard from "../components/video/VideoCard.jsx";
 import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
 
+const FEATURES = [
+  {
+    icon: Video,
+    title: "Crystal-Clear Video Streaming",
+    description:
+      "High-performance video delivery with adaptive quality, seamless playback, customizable thumbnails, and smart watch history tracking.",
+    badge: "4K Ready",
+    color: "from-red-500/20 to-orange-500/20",
+  },
+  {
+    icon: BarChart3,
+    title: "Real-Time Creator Analytics",
+    description:
+      "Comprehensive dashboard tracking your channel views, subscriber trajectories, likes, and engagement metrics at a glance.",
+    badge: "Creator Studio",
+    color: "from-blue-500/20 to-cyan-500/20",
+  },
+  {
+    icon: MessageSquareText,
+    title: "Community Tweets & Microblogging",
+    description:
+      "Engage with your followers through instant short-form tweets, discussions, and updates directly integrated into the platform.",
+    badge: "Interactive Feed",
+    color: "from-purple-500/20 to-pink-500/20",
+  },
+  {
+    icon: Layers,
+    title: "Playlists & Channel Customization",
+    description:
+      "Curate personalized video collections, design custom profile avatars and banners, and showcase your best creations.",
+    badge: "Customization",
+    color: "from-emerald-500/20 to-teal-500/20",
+  },
+  {
+    icon: Zap,
+    title: "Instant Search & Zero Bloat",
+    description:
+      "Lightning-fast search with zero lag, instant filtering, and a lightweight, privacy-focused viewing experience.",
+    badge: "Speed",
+    color: "from-amber-500/20 to-yellow-500/20",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure Authentication & Control",
+    description:
+      "Enterprise-grade JWT session management, full video management (publish/unpublish), and complete profile controls.",
+    badge: "Security",
+    color: "from-indigo-500/20 to-violet-500/20",
+  },
+];
+
+const STATS = [
+  { value: "4K HD", label: "Streaming Quality" },
+  { value: "0 ms", label: "Buffer Lag" },
+  { value: "100%", label: "Free & Open for Creators" },
+  { value: "24/7", label: "Community Engagement" },
+];
+
+const STEPS = [
+  {
+    num: "01",
+    title: "Create Your Channel",
+    desc: "Set up your profile, customize your avatar and channel banner in less than 30 seconds.",
+  },
+  {
+    num: "02",
+    title: "Upload & Share Content",
+    desc: "Upload high-definition videos with custom titles, descriptions, and eye-catching thumbnails.",
+  },
+  {
+    num: "03",
+    title: "Grow & Interact",
+    desc: "Post community tweets, track real-time analytics in your studio, and build a loyal audience.",
+  },
+];
+
 const Landing = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
@@ -38,10 +114,12 @@ const Landing = () => {
         const data = await getAllVideos({
           page: 1,
           limit: 4,
+          sortBy: "views",
+          sortType: "desc",
         });
         setTrendingVideos(data?.videos || []);
-      } catch (error) {
-        console.error("Failed to fetch trending videos for landing page:", error);
+      } catch {
+        setTrendingVideos([]);
       } finally {
         setLoadingVideos(false);
       }
@@ -50,86 +128,10 @@ const Landing = () => {
     fetchTrending();
   }, []);
 
-  const features = [
-    {
-      icon: Video,
-      title: "Crystal-Clear Video Streaming",
-      description:
-        "High-performance video delivery with adaptive quality, seamless playback, customizable thumbnails, and smart watch history tracking.",
-      badge: "4K Ready",
-      color: "from-red-500/20 to-orange-500/20",
-    },
-    {
-      icon: BarChart3,
-      title: "Real-Time Creator Analytics",
-      description:
-        "Comprehensive dashboard tracking your channel views, subscriber trajectories, likes, and engagement metrics at a glance.",
-      badge: "Creator Studio",
-      color: "from-blue-500/20 to-cyan-500/20",
-    },
-    {
-      icon: MessageSquareText,
-      title: "Community Tweets & Microblogging",
-      description:
-        "Engage with your followers through instant short-form tweets, discussions, and updates directly integrated into the platform.",
-      badge: "Interactive Feed",
-      color: "from-purple-500/20 to-pink-500/20",
-    },
-    {
-      icon: Layers,
-      title: "Playlists & Channel Customization",
-      description:
-        "Curate personalized video collections, design custom profile avatars and banners, and showcase your best creations.",
-      badge: "Customization",
-      color: "from-emerald-500/20 to-teal-500/20",
-    },
-    {
-      icon: Zap,
-      title: "Instant Search & Zero Bloat",
-      description:
-        "Lightning-fast search with zero lag, instant filtering, and a lightweight, privacy-focused viewing experience.",
-      badge: "Speed",
-      color: "from-amber-500/20 to-yellow-500/20",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Secure Authentication & Control",
-      description:
-        "Enterprise-grade JWT session management, full video management (publish/unpublish), and complete profile controls.",
-      badge: "Security",
-      color: "from-indigo-500/20 to-violet-500/20",
-    },
-  ];
-
-  const stats = [
-    { value: "4K HD", label: "Streaming Quality" },
-    { value: "0 ms", label: "Buffer Lag" },
-    { value: "100%", label: "Free & Open for Creators" },
-    { value: "24/7", label: "Community Engagement" },
-  ];
-
-  const steps = [
-    {
-      num: "01",
-      title: "Create Your Channel",
-      desc: "Set up your profile, customize your avatar and channel banner in less than 30 seconds.",
-    },
-    {
-      num: "02",
-      title: "Upload & Share Content",
-      desc: "Upload high-definition videos with custom titles, descriptions, and eye-catching thumbnails.",
-    },
-    {
-      num: "03",
-      title: "Grow & Interact",
-      desc: "Post community tweets, track real-time analytics in your studio, and build a loyal audience.",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-(--bg) text-(--text) selection:bg-(--accent) selection:text-white">
       {/* ─── Top Landing Navigation ─── */}
-      <header className="sticky top-0 z-50 border-b border-(--border) bg-(--bg)/80 backdrop-blur-xl transition-all duration-300">
+      <header className="sticky top-0 z-50 border-b border-(--border) bg-(--bg)/80 backdrop-blur-xl transition-colors duration-300">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             to="/"
@@ -172,7 +174,7 @@ const Landing = () => {
             <button
               type="button"
               onClick={() => dispatch(toggleTheme())}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-all duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             >
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
@@ -180,14 +182,14 @@ const Landing = () => {
 
             <Link
               to="/login"
-              className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-all duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) sm:inline-flex"
+              className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) sm:inline-flex"
             >
               Log in
             </Link>
 
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-(--accent-soft) transition-all duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
+              className="inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-(--accent-soft) transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
             >
               <span>Get Started</span>
               <ArrowRight size={15} />
@@ -225,7 +227,7 @@ const Landing = () => {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/register"
-              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
             >
               <span>Create Free Account</span>
               <ArrowRight size={18} />
@@ -233,7 +235,7 @@ const Landing = () => {
 
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2.5 rounded-full border border-(--border-strong) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
+              className="inline-flex items-center gap-2.5 rounded-full border border-(--border-strong) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) shadow-sm transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
             >
               <Compass size={18} className="text-(--accent)" />
               <span>Explore Videos as Guest</span>
@@ -261,7 +263,7 @@ const Landing = () => {
                 <div className="flex flex-col items-center justify-center my-auto">
                   <Link
                     to="/explore"
-                    className="group flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-(--accent) text-white shadow-2xl shadow-(--accent-soft) transition-all duration-300 hover:scale-110 hover:bg-(--accent-strong)"
+                    className="group flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-(--accent) text-white shadow-2xl shadow-(--accent-soft) transition-transform transition-colors duration-300 hover:scale-110 hover:bg-(--accent-strong)"
                     aria-label="Start Watching"
                   >
                     <Play size={28} className="ml-1 fill-white" />
@@ -313,7 +315,7 @@ const Landing = () => {
       <section className="border-y border-(--border) bg-(--surface)/50 py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {stats.map((stat, i) => (
+            {STATS.map((stat, i) => (
               <div key={i} className="text-center">
                 <p className="text-2xl font-bold tracking-tight text-(--accent) sm:text-4xl tabular-nums">
                   {stat.value}
@@ -346,7 +348,7 @@ const Landing = () => {
 
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-medium text-(--text) transition-all duration-200 hover:border-(--accent) hover:bg-(--surface-2) hover:text-(--accent) self-start md:self-auto"
+              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-medium text-(--text) transition-colors duration-200 hover:border-(--accent) hover:bg-(--surface-2) hover:text-(--accent) self-start md:self-auto"
             >
               <span>View All Videos</span>
               <ArrowRight size={16} />
@@ -392,12 +394,12 @@ const Landing = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feat, i) => {
+            {FEATURES.map((feat, i) => {
               const Icon = feat.icon;
               return (
                 <div
                   key={i}
-                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-7 shadow-(--shadow-sm) transition-all duration-300 hover:-translate-y-1.5 hover:border-(--accent) hover:shadow-(--shadow)"
+                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-7 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1.5 hover:border-(--accent) hover:shadow-(--shadow)"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--accent-soft) text-(--accent) transition-transform duration-300 group-hover:scale-110">
@@ -434,7 +436,7 @@ const Landing = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step, i) => (
+            {STEPS.map((step, i) => (
               <div
                 key={i}
                 className="relative rounded-3xl border border-(--border) bg-(--surface) p-8 shadow-sm"
@@ -469,7 +471,7 @@ const Landing = () => {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-all duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
                 >
                   <span>Get Started Now</span>
                   <ArrowRight size={18} />
@@ -477,7 +479,7 @@ const Landing = () => {
 
                 <Link
                   to="/explore"
-                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
+                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
                 >
                   <Compass size={18} />
                   <span>Browse Catalog</span>

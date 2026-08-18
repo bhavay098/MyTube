@@ -11,11 +11,16 @@ import Spinner from "../components/ui/Spinner.jsx";
 import { loginUser, registerUser } from "../services/auth.service.js";
 import { setUser } from "../store/authSlice.js";
 
+const handleDragOver = (e) => {
+  e.preventDefault();
+};
+
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef(null);
+  const avatarRef = useRef(null);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -24,7 +29,6 @@ const Register = () => {
     password: "",
   });
 
-  const [avatar, setAvatar] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +42,7 @@ const Register = () => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatar(file);
+      avatarRef.current = file;
       setAvatarPreview(URL.createObjectURL(file));
     }
   };
@@ -47,19 +51,15 @@ const Register = () => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
-      setAvatar(file);
+      avatarRef.current = file;
       setAvatarPreview(URL.createObjectURL(file));
     }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!avatar) {
+    if (!avatarRef.current) {
       return toast.error("Avatar is required");
     }
 
@@ -73,7 +73,7 @@ const Register = () => {
       submitData.append("email", formData.email);
       submitData.append("password", formData.password);
 
-      submitData.append("avatar", avatar);
+      submitData.append("avatar", avatarRef.current);
 
       const registerResponse = await registerUser(submitData);
 
@@ -150,7 +150,10 @@ const Register = () => {
         />
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-(--muted)">
+          <label
+            htmlFor="avatar-upload"
+            className="mb-2 block text-sm font-medium text-(--muted)"
+          >
             Avatar
           </label>
 
@@ -158,7 +161,7 @@ const Register = () => {
             onClick={() => fileInputRef.current?.click()}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+            className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
           >
             {avatarPreview ? (
               <div className="flex flex-col items-center gap-3">
@@ -187,6 +190,7 @@ const Register = () => {
             )}
 
             <input
+              id="avatar-upload"
               ref={fileInputRef}
               type="file"
               accept="image/*"
@@ -199,7 +203,7 @@ const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
         >
           {loading ? (
             <>

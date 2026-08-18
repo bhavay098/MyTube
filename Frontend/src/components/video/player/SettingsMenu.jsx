@@ -3,6 +3,10 @@ import { Settings, ChevronRight, ChevronLeft, Check, Repeat } from "lucide-react
 
 const SPEED_OPTIONS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
+const formatSpeedLabel = (speed) => {
+  return speed === 1 ? "Normal" : `${speed}x`;
+};
+
 const SettingsMenu = ({
   playbackSpeed = 1,
   onSpeedChange,
@@ -26,10 +30,6 @@ const SettingsMenu = ({
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
-
-  const formatSpeedLabel = (speed) => {
-    return speed === 1 ? "Normal" : `${speed}x`;
-  };
 
   return (
     <div ref={menuRef} className="relative">

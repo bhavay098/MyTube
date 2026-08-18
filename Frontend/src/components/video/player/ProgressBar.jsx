@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useEffectEvent, useCallback } from "react";
 
 const formatTimeTooltip = (seconds) => {
   if (isNaN(seconds) || seconds < 0) return "0:00";
@@ -61,7 +61,7 @@ const ProgressBar = ({
         setDragTime(time);
       }
     },
-    [calculateTimeFromEvent, duration, isDragging]
+    [duration, isDragging]
   );
 
   const handleMouseLeave = () => {
@@ -70,28 +70,28 @@ const ProgressBar = ({
     }
   };
 
+  const onDragMove = useEffectEvent((e) => {
+    const time = calculateTimeFromEvent(e);
+    setDragTime(time);
+  });
+
+  const onDragEnd = useEffectEvent((e) => {
+    setIsDragging(false);
+    const finalTime = calculateTimeFromEvent(e);
+    onSeek(finalTime);
+  });
+
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleWindowMouseMove = (e) => {
-      const time = calculateTimeFromEvent(e);
-      setDragTime(time);
-    };
-
-    const handleWindowMouseUp = (e) => {
-      setIsDragging(false);
-      const finalTime = calculateTimeFromEvent(e);
-      onSeek(finalTime);
-    };
-
-    window.addEventListener("mousemove", handleWindowMouseMove);
-    window.addEventListener("mouseup", handleWindowMouseUp);
+    window.addEventListener("mousemove", onDragMove);
+    window.addEventListener("mouseup", onDragEnd);
 
     return () => {
-      window.removeEventListener("mousemove", handleWindowMouseMove);
-      window.removeEventListener("mouseup", handleWindowMouseUp);
+      window.removeEventListener("mousemove", onDragMove);
+      window.removeEventListener("mouseup", onDragEnd);
     };
-  }, [isDragging, calculateTimeFromEvent, onSeek]);
+  }, [isDragging]);
 
   const activeTime = isDragging ? dragTime : currentTime;
   const progressPercent = duration > 0 ? Math.min(100, (activeTime / duration) * 100) : 0;
@@ -122,10 +122,10 @@ const ProgressBar = ({
       )}
 
       {/* Progress Track Container */}
-      <div className="relative h-1 w-full bg-white/20 transition-all duration-150 group-hover/progress:h-2">
+      <div className="relative h-1 w-full bg-white/20 transition-[height] duration-150 group-hover/progress:h-2">
         {/* Buffered portion */}
         <div
-          className="absolute top-0 bottom-0 left-0 bg-white/40 transition-all"
+          className="absolute top-0 bottom-0 left-0 bg-white/40 transition-[width]"
           style={{ width: `${bufferedPercent}%` }}
         />
 

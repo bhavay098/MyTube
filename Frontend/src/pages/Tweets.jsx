@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { format } from "timeago.js";
@@ -39,7 +39,7 @@ const Tweets = () => {
 
   // Edit modal
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editTweet, setEditTweet] = useState(null);
+  const editTweetRef = useRef(null);
   const [editContent, setEditContent] = useState("");
   const [editLoading, setEditLoading] = useState(false);
 
@@ -47,26 +47,29 @@ const Tweets = () => {
   const [deleteTweetId, setDeleteTweetId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const fetchTweets = async (tab = activeTab) => {
-    try {
-      setLoading(true);
-      if (tab === "my_posts" && user?._id) {
-        const data = await getUserTweets(user._id);
-        setTweets(data || []);
-      } else {
-        const data = await getAllTweetsFeed();
-        setTweets(data || []);
+  const fetchTweets = useCallback(
+    async (tab = activeTab) => {
+      try {
+        setLoading(true);
+        if (tab === "my_posts" && user?._id) {
+          const data = await getUserTweets(user._id);
+          setTweets(data || []);
+        } else {
+          const data = await getAllTweetsFeed();
+          setTweets(data || []);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Failed to load posts");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to load posts");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [activeTab, user?._id]
+  );
 
   useEffect(() => {
     fetchTweets(activeTab);
-  }, [activeTab, user?._id]);
+  }, [fetchTweets, activeTab]);
 
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
@@ -93,17 +96,17 @@ const Tweets = () => {
   };
 
   const openEditModal = (tweet) => {
-    setEditTweet(tweet);
+    editTweetRef.current = tweet;
     setEditContent(tweet.content);
     setEditModalOpen(true);
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    if (!editContent.trim() || !editTweet) return;
+    if (!editContent.trim() || !editTweetRef.current) return;
     try {
       setEditLoading(true);
-      await updateTweet(editTweet._id, editContent);
+      await updateTweet(editTweetRef.current._id, editContent);
       await fetchTweets(activeTab);
       setEditModalOpen(false);
       toast.success("Post updated");
@@ -216,12 +219,16 @@ const Tweets = () => {
                   className="mt-1 h-10 w-10 shrink-0 rounded-full object-cover border border-(--border)"
                 />
                 <div className="flex-1">
+                  <label htmlFor="compose-tweet-input" className="sr-only">
+                    Share something with the community
+                  </label>
                   <textarea
+                    id="compose-tweet-input"
                     value={tweetText}
                     onChange={(event) => setTweetText(event.target.value)}
                     placeholder="Share something with the community..."
                     rows={3}
-                    className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                    className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                   />
                   <div className="mt-2.5 flex items-center justify-between">
                     <span
@@ -236,7 +243,7 @@ const Tweets = () => {
                       disabled={
                         posting || !tweetText.trim() || isOverLimit
                       }
-                      className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer shadow-md shadow-(--accent-soft)"
+                      className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer shadow-md shadow-(--accent-soft)"
                     >
                       {posting ? (
                         <Spinner size={14} />
@@ -279,7 +286,7 @@ const Tweets = () => {
             return (
               <article
                 key={tweet._id}
-                className="animate-fade-in rounded-3xl border border-(--border) bg-(--surface) p-5 shadow-(--shadow-sm) transition-all duration-200 hover:border-(--border-strong)"
+                className="animate-fade-in rounded-3xl border border-(--border) bg-(--surface) p-5 shadow-(--shadow-sm) transition-colors duration-200 hover:border-(--border-strong)"
               >
                 <div className="flex gap-3.5">
                   <Link to={`/channel/${author?.username}`}>
@@ -374,11 +381,15 @@ const Tweets = () => {
         title="Edit Community Post"
       >
         <form onSubmit={handleEdit} className="space-y-4">
+          <label htmlFor="edit-tweet-input" className="sr-only">
+            Edit post content
+          </label>
           <textarea
+            id="edit-tweet-input"
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
             rows={4}
-            className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+            className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
           />
           <div className="flex items-center justify-between">
             <span
@@ -405,7 +416,7 @@ const Tweets = () => {
                   !editContent.trim() ||
                   editContent.length > MAX_TWEET_LENGTH
                 }
-                className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-all hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
               >
                 {editLoading && <Spinner size={14} />}
                 Save Changes

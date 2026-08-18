@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -53,6 +53,13 @@ const formatDuration = (seconds) => {
   return `${mins}:${String(secs).padStart(2, "0")}`;
 };
 
+const handleShare = () => {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard!");
+  }
+};
+
 const VideoDetail = () => {
   const { videoId } = useParams();
   const navigate = useNavigate();
@@ -73,7 +80,6 @@ const VideoDetail = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editThumbnail, setEditThumbnail] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -84,7 +90,7 @@ const VideoDetail = () => {
 
   const editThumbnailRef = useRef(null);
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     try {
       setLoading(true);
       const [videoData, relatedData] = await Promise.all([
@@ -117,12 +123,12 @@ const VideoDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [videoId, currentUser?._id]);
 
   useEffect(() => {
     fetchAll();
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [videoId, currentUser?._id]);
+  }, [fetchAll]);
 
   const handlePostComment = async (event) => {
     event.preventDefault();
@@ -239,12 +245,7 @@ const VideoDetail = () => {
     }
   };
 
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard!");
-    }
-  };
+
 
   const handleTogglePublish = async () => {
     try {
@@ -275,7 +276,9 @@ const VideoDetail = () => {
   const openEditModal = () => {
     setEditTitle(video?.title || "");
     setEditDescription(video?.description || "");
-    setEditThumbnail(null);
+    if (editThumbnailRef.current) {
+      editThumbnailRef.current.value = "";
+    }
     setEditModalOpen(true);
   };
 
@@ -287,8 +290,9 @@ const VideoDetail = () => {
       const formData = new FormData();
       formData.append("title", editTitle);
       formData.append("description", editDescription);
-      if (editThumbnail) {
-        formData.append("thumbnail", editThumbnail);
+      const newThumbnail = editThumbnailRef.current?.files?.[0];
+      if (newThumbnail) {
+        formData.append("thumbnail", newThumbnail);
       }
       await updateVideo(videoId, formData);
       await fetchAll();
@@ -340,7 +344,7 @@ const VideoDetail = () => {
           </p>
           <Link
             to="/explore"
-            className="mt-4 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-(--accent-strong)"
+            className="mt-4 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-(--accent-strong)"
           >
             Explore Videos
           </Link>
@@ -466,7 +470,7 @@ const VideoDetail = () => {
 
                   <button
                     onClick={handleShare}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:border-(--accent) hover:text-(--accent) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-medium text-(--text) transition-colors duration-200 hover:border-(--accent) hover:text-(--accent) cursor-pointer"
                   >
                     <Share2 size={14} />
                     <span>Share</span>
@@ -475,6 +479,7 @@ const VideoDetail = () => {
                   {playlists.length > 0 && (
                     <div className="flex items-center gap-1.5">
                       <select
+                        aria-label="Select playlist"
                         value={selectedPlaylistId}
                         onChange={(event) =>
                           setSelectedPlaylistId(event.target.value)
@@ -489,9 +494,11 @@ const VideoDetail = () => {
                         ))}
                       </select>
                       <button
+                        type="button"
                         onClick={handleAddToPlaylist}
                         disabled={!selectedPlaylistId}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--text) transition-all duration-200 hover:border-(--accent) disabled:opacity-40 cursor-pointer"
+                        aria-label="Add to playlist"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--text) transition-colors duration-200 hover:border-(--accent) disabled:opacity-40 cursor-pointer"
                       >
                         <ListPlus size={15} />
                       </button>
@@ -529,7 +536,7 @@ const VideoDetail = () => {
                 <div className="mt-5 flex flex-wrap gap-2 border-t border-(--border) pt-4">
                   <button
                     onClick={handleTogglePublish}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-colors duration-200 hover:bg-(--surface-2) cursor-pointer"
                   >
                     {video?.isPublished ? (
                       <EyeOff size={14} />
@@ -540,14 +547,14 @@ const VideoDetail = () => {
                   </button>
                   <button
                     onClick={openEditModal}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-all duration-200 hover:bg-(--surface-2) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-4 py-2 text-xs font-medium text-(--text) transition-colors duration-200 hover:bg-(--surface-2) cursor-pointer"
                   >
                     <Pencil size={14} />
                     Edit
                   </button>
                   <button
                     onClick={() => setDeleteDialogOpen(true)}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--error) px-4 py-2 text-xs font-medium text-(--error) transition-all duration-200 hover:bg-(--error-soft) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-(--error) px-4 py-2 text-xs font-medium text-(--error) transition-colors duration-200 hover:bg-(--error-soft) cursor-pointer"
                   >
                     <Trash2 size={14} />
                     Delete
@@ -573,16 +580,20 @@ const VideoDetail = () => {
                     className="mt-1 h-9 w-9 shrink-0 rounded-full object-cover"
                   />
                   <div className="flex flex-1 gap-2">
+                    <label htmlFor="video-comment-input" className="sr-only">
+                      Add a public comment
+                    </label>
                     <input
+                      id="video-comment-input"
                       value={commentText}
                       onChange={(event) => setCommentText(event.target.value)}
                       placeholder="Add a public comment..."
-                      className="flex-1 rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                      className="flex-1 rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                     />
                     <button
                       type="submit"
                       disabled={!commentText.trim() || postingComment}
-                      className="flex items-center gap-1.5 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer"
+                      className="flex items-center gap-1.5 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer"
                     >
                       {postingComment ? <Spinner size={14} /> : <Send size={14} />}
                       Post
@@ -597,7 +608,7 @@ const VideoDetail = () => {
                   <Link
                     to="/login"
                     state={{ from: `/video/${videoId}` }}
-                    className="inline-flex items-center justify-center rounded-full bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong)"
+                    className="inline-flex items-center justify-center rounded-full bg-(--accent) px-5 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong)"
                   >
                     Sign In
                   </Link>
@@ -688,7 +699,7 @@ const VideoDetail = () => {
                   <Link
                     key={rVideo._id}
                     to={`/video/${rVideo._id}`}
-                    className="group flex gap-3 rounded-2xl border border-(--border) bg-(--surface) p-2.5 transition-all duration-200 hover:border-(--accent) hover:bg-(--surface-2)"
+                    className="group flex gap-3 rounded-2xl border border-(--border) bg-(--surface) p-2.5 transition-colors duration-200 hover:border-(--accent) hover:bg-(--surface-2)"
                   >
                     <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-xl bg-(--surface-2)">
                       <img
@@ -742,35 +753,46 @@ const VideoDetail = () => {
       >
         <form onSubmit={handleUpdateVideo} className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+            <label
+              htmlFor="edit-video-title"
+              className="mb-1.5 block text-sm font-medium text-(--muted)"
+            >
               Title
             </label>
             <input
+              id="edit-video-title"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+            <label
+              htmlFor="edit-video-desc"
+              className="mb-1.5 block text-sm font-medium text-(--muted)"
+            >
               Description
             </label>
             <textarea
+              id="edit-video-desc"
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
               rows={4}
-              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+            <label
+              htmlFor="edit-video-thumb"
+              className="mb-1.5 block text-sm font-medium text-(--muted)"
+            >
               New Thumbnail (optional)
             </label>
             <input
+              id="edit-video-thumb"
               ref={editThumbnailRef}
               type="file"
               accept="image/*"
-              onChange={(e) => setEditThumbnail(e.target.files?.[0] || null)}
               className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2 text-sm text-(--text) file:mr-3 file:rounded-lg file:border-0 file:bg-(--accent) file:px-3 file:py-1 file:text-xs file:font-medium file:text-white"
             />
           </div>
@@ -785,7 +807,7 @@ const VideoDetail = () => {
             <button
               type="submit"
               disabled={editLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
             >
               {editLoading && <Spinner size={14} />}
               Save Changes

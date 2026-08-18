@@ -89,7 +89,7 @@ const Subscriptions = () => {
               {subscribers.map((item) => (
                 <div
                   key={item._id}
-                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-all duration-200 hover:border-(--border-strong)"
+                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-colors duration-200 hover:border-(--border-strong)"
                 >
                   {item?.subscriber?.avatar ? (
                     <img
@@ -142,7 +142,7 @@ const Subscriptions = () => {
                 <Link
                   to={`/channel/${item?.channel?.username}`}
                   key={item._id}
-                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
                 >
                   {item?.channel?.avatar ? (
                     <img

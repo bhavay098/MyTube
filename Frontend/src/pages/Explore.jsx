@@ -109,7 +109,34 @@ const Explore = () => {
   };
 
   useEffect(() => {
-    fetchVideos();
+    let isMounted = true;
+
+    const loadInitial = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllVideos({
+          page: 1,
+          limit: 24,
+          sortBy: sortOptions[0].sortBy,
+          sortType: sortOptions[0].sortType,
+        });
+        if (isMounted) {
+          setVideos(data?.videos || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch videos:", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadInitial();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

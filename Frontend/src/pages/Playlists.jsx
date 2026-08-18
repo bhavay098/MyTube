@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -33,7 +33,7 @@ const Playlists = () => {
 
   // Edit modal
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editPlaylist, setEditPlaylist] = useState(null);
+  const editPlaylistRef = useRef(null);
   const [editForm, setEditForm] = useState({ name: "", description: "" });
   const [editLoading, setEditLoading] = useState(false);
 
@@ -112,20 +112,20 @@ const Playlists = () => {
   };
 
   const openEditModal = (playlist) => {
-    setEditPlaylist(playlist);
+    editPlaylistRef.current = playlist;
     setEditForm({ name: playlist.name, description: playlist.description || "" });
     setEditModalOpen(true);
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!editPlaylist) return;
+    if (!editPlaylistRef.current) return;
     try {
       setEditLoading(true);
-      await updatePlaylist(editPlaylist._id, editForm);
+      await updatePlaylist(editPlaylistRef.current._id, editForm);
       await fetchPlaylists();
-      if (selectedPlaylist?._id === editPlaylist._id) {
-        await handleSelectPlaylist(editPlaylist._id);
+      if (selectedPlaylist?._id === editPlaylistRef.current._id) {
+        await handleSelectPlaylist(editPlaylistRef.current._id);
       }
       setEditModalOpen(false);
       toast.success("Playlist updated");
@@ -166,10 +166,14 @@ const Playlists = () => {
             </h2>
             <form onSubmit={handleCreate} className="space-y-3">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+                <label
+                  htmlFor="create-playlist-name"
+                  className="mb-1.5 block text-sm font-medium text-(--muted)"
+                >
                   Name
                 </label>
                 <input
+                  id="create-playlist-name"
                   value={form.name}
                   onChange={(event) =>
                     setForm((current) => ({
@@ -178,14 +182,18 @@ const Playlists = () => {
                     }))
                   }
                   placeholder="My awesome playlist"
-                  className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                  className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+                <label
+                  htmlFor="create-playlist-desc"
+                  className="mb-1.5 block text-sm font-medium text-(--muted)"
+                >
                   Description
                 </label>
                 <textarea
+                  id="create-playlist-desc"
                   value={form.description}
                   onChange={(event) =>
                     setForm((current) => ({
@@ -195,12 +203,12 @@ const Playlists = () => {
                   }
                   placeholder="What's this playlist about?"
                   rows={3}
-                  className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                  className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 />
               </div>
               <button
                 disabled={createLoading}
-                className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
               >
                 {createLoading && <Spinner size={14} />}
                 Create
@@ -286,7 +294,9 @@ const Playlists = () => {
                 )}
               </div>
               <button
+                type="button"
                 onClick={() => setSelectedPlaylist(null)}
+                aria-label="Close playlist details"
                 className="rounded-lg p-2 text-(--muted) transition-colors hover:bg-(--surface-2) hover:text-(--text)"
               >
                 <X size={16} />
@@ -342,22 +352,30 @@ const Playlists = () => {
       >
         <form onSubmit={handleUpdate} className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+            <label
+              htmlFor="edit-playlist-name"
+              className="mb-1.5 block text-sm font-medium text-(--muted)"
+            >
               Name
             </label>
             <input
+              id="edit-playlist-name"
               value={editForm.name}
               onChange={(e) =>
                 setEditForm((prev) => ({ ...prev, name: e.target.value }))
               }
-              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-(--muted)">
+            <label
+              htmlFor="edit-playlist-desc"
+              className="mb-1.5 block text-sm font-medium text-(--muted)"
+            >
               Description
             </label>
             <textarea
+              id="edit-playlist-desc"
               value={editForm.description}
               onChange={(e) =>
                 setEditForm((prev) => ({
@@ -366,7 +384,7 @@ const Playlists = () => {
                 }))
               }
               rows={3}
-              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+              className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
             />
           </div>
           <div className="flex justify-end gap-3 pt-2">
@@ -380,7 +398,7 @@ const Playlists = () => {
             <button
               type="submit"
               disabled={editLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-(--accent-strong) disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-(--accent-strong) disabled:opacity-50"
             >
               {editLoading && <Spinner size={14} />}
               Save

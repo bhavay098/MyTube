@@ -1,4 +1,5 @@
 const AuthInput = ({
+  id,
   label,
   type = "text",
   placeholder,
@@ -7,9 +8,14 @@ const AuthInput = ({
   name,
   icon: Icon,
 }) => {
+  const inputId = id || name;
+
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-(--muted)">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-medium text-(--muted)"
+      >
         {label}
       </label>
 
@@ -21,6 +27,7 @@ const AuthInput = ({
         )}
 
         <input
+          id={inputId}
           type={type}
           placeholder={placeholder}
           value={value}
@@ -28,7 +35,7 @@ const AuthInput = ({
           name={name}
           className={`w-full rounded-xl border border-(--border) bg-(--surface-2) ${
             Icon ? "pl-11" : "px-4"
-          } py-3 pr-4 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]`}
+          } py-3 pr-4 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]`}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -43,48 +43,61 @@ const ChannelProfile = () => {
   const [tweets, setTweets] = useState([]);
   const [tabLoading, setTabLoading] = useState(false);
 
-  const fetchProfileAndContent = async () => {
-    try {
-      setLoading(true);
-      const data = await getChannelProfileByUsername(username);
-      setProfile(data);
+  const loadTabContent = useCallback(
+    async (tab, userId) => {
+      const targetUserId = userId || profile?._id;
+      if (!targetUserId) return;
 
-      if (data?._id) {
-        loadTabContent("videos", data._id);
+      try {
+        setTabLoading(true);
+        if (tab === "videos") {
+          const vData = await getAllVideos({ userId: targetUserId, limit: 30 });
+          setVideos(vData?.videos || []);
+        } else if (tab === "playlists") {
+          const pData = await getUserPlaylists(targetUserId);
+          setPlaylists(pData || []);
+        } else if (tab === "community") {
+          const tData = await getUserTweets(targetUserId);
+          setTweets(tData || []);
+        }
+      } catch (error) {
+        console.error(`Failed to load ${tab}:`, error);
+      } finally {
+        setTabLoading(false);
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to load channel profile");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadTabContent = async (tab, userId) => {
-    const targetUserId = userId || profile?._id;
-    if (!targetUserId) return;
-
-    try {
-      setTabLoading(true);
-      if (tab === "videos") {
-        const vData = await getAllVideos({ userId: targetUserId, limit: 30 });
-        setVideos(vData?.videos || []);
-      } else if (tab === "playlists") {
-        const pData = await getUserPlaylists(targetUserId);
-        setPlaylists(pData || []);
-      } else if (tab === "community") {
-        const tData = await getUserTweets(targetUserId);
-        setTweets(tData || []);
-      }
-    } catch (error) {
-      console.error(`Failed to load ${tab}:`, error);
-    } finally {
-      setTabLoading(false);
-    }
-  };
+    },
+    [profile?._id]
+  );
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchProfileAndContent = async () => {
+      try {
+        setLoading(true);
+        const data = await getChannelProfileByUsername(username);
+        if (!isMounted) return;
+        setProfile(data);
+
+        if (data?._id) {
+          loadTabContent("videos", data._id);
+        }
+      } catch (error) {
+        if (!isMounted) return;
+        toast.error(
+          error?.response?.data?.message || "Failed to load channel profile",
+        );
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
     fetchProfileAndContent();
-  }, [username]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [username, loadTabContent]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -151,7 +164,7 @@ const ChannelProfile = () => {
           </p>
           <Link
             to="/explore"
-            className="mt-5 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-(--accent-strong)"
+            className="mt-5 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-(--accent-strong)"
           >
             Explore Channels
           </Link>
@@ -215,7 +228,7 @@ const ChannelProfile = () => {
             <Link
               key={playlist._id}
               to="/playlists"
-              className="group rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)"
+              className="group rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent)"
             >
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-(--surface-2)">
                 {playlist.videos?.[0]?.thumbnail ? (
@@ -271,7 +284,7 @@ const ChannelProfile = () => {
           {tweets.map((tweet) => (
             <article
               key={tweet._id}
-              className="rounded-2xl border border-(--border) bg-(--surface) p-5 transition-all hover:border-(--border-strong)"
+              className="rounded-2xl border border-(--border) bg-(--surface) p-5 transition-colors hover:border-(--border-strong)"
             >
               <div className="flex gap-3.5">
                 <img
@@ -380,7 +393,7 @@ const ChannelProfile = () => {
               {isOwnProfile ? (
                 <Link
                   to="/settings"
-                  className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface)/90 backdrop-blur-md px-5 py-2.5 text-xs font-semibold text-(--text) transition-all hover:bg-(--surface-2)"
+                  className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface)/90 backdrop-blur-md px-5 py-2.5 text-xs font-semibold text-(--text) transition-colors hover:bg-(--surface-2)"
                 >
                   Customize Channel
                 </Link>
@@ -388,7 +401,7 @@ const ChannelProfile = () => {
                 <button
                   onClick={handleSubscribeToggle}
                   disabled={subscribing}
-                  className={`inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-xs font-semibold transition-all duration-200 cursor-pointer shadow-lg ${
+                  className={`inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-xs font-semibold transition-colors duration-200 cursor-pointer shadow-lg ${
                     profile.isSubscribed
                       ? "border border-white/20 bg-white/20 text-white backdrop-blur-md hover:bg-(--error) hover:border-(--error)"
                       : "bg-(--accent) text-white hover:bg-(--accent-strong)"

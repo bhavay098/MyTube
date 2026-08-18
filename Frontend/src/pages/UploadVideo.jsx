@@ -27,10 +27,21 @@ const categories = [
   "Vlogs",
 ];
 
+const handleDragOver = (e) => {
+  e.preventDefault();
+};
+
+const handleDrop = (setter) => (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) setter(file);
+};
+
 const UploadVideo = () => {
   const navigate = useNavigate();
   const videoInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
+  const thumbnailRef = useRef(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -39,7 +50,6 @@ const UploadVideo = () => {
     tags: "",
   });
   const [videoFile, setVideoFile] = useState(null);
-  const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -53,21 +63,11 @@ const UploadVideo = () => {
 
   const handleThumbnailChange = (file) => {
     if (file && file.type.startsWith("image/")) {
-      setThumbnail(file);
+      thumbnailRef.current = file;
       setThumbnailPreview(URL.createObjectURL(file));
     } else if (file) {
       toast.error("Please upload a valid image file");
     }
-  };
-
-  const handleDrop = (setter) => (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) setter(file);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
   };
 
   const handleSubmit = async (event) => {
@@ -83,7 +83,7 @@ const UploadVideo = () => {
       return;
     }
 
-    if (!videoFile || !thumbnail) {
+    if (!videoFile || !thumbnailRef.current) {
       toast.error("Both video file and thumbnail image are required");
       return;
     }
@@ -99,7 +99,7 @@ const UploadVideo = () => {
         payload.append("tags", form.tags.trim());
       }
       payload.append("videoFile", videoFile);
-      payload.append("thumbnail", thumbnail);
+      payload.append("thumbnail", thumbnailRef.current);
 
       await publishVideo(payload);
       toast.success("Video uploaded and published successfully!");
@@ -130,10 +130,14 @@ const UploadVideo = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="video-title"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Title <span className="text-(--accent)">*</span>
               </label>
               <input
+                id="video-title"
                 value={form.title}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -142,16 +146,20 @@ const UploadVideo = () => {
                   }))
                 }
                 placeholder="Give your video a catchy title"
-                className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="video-description"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Description <span className="text-(--accent)">*</span>
               </label>
               <textarea
+                id="video-description"
                 value={form.description}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -161,18 +169,22 @@ const UploadVideo = () => {
                 }
                 rows={4}
                 placeholder="Tell viewers what your video is about..."
-                className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full resize-none rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
               />
             </div>
 
             {/* Category & Tags Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)">
+                <label
+                  htmlFor="video-category"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)"
+                >
                   <Folder size={13} className="text-(--accent)" />
                   Category
                 </label>
                 <select
+                  id="video-category"
                   value={form.category}
                   onChange={(e) =>
                     setForm((current) => ({
@@ -180,7 +192,7 @@ const UploadVideo = () => {
                       category: e.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent)"
+                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent)"
                 >
                   {categories.map((c) => (
                     <option key={c} value={c}>
@@ -191,11 +203,15 @@ const UploadVideo = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)">
+                <label
+                  htmlFor="video-tags"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-(--muted)"
+                >
                   <Tag size={13} className="text-(--accent)" />
                   Tags (comma separated)
                 </label>
                 <input
+                  id="video-tags"
                   value={form.tags}
                   onChange={(e) =>
                     setForm((current) => ({
@@ -204,21 +220,24 @@ const UploadVideo = () => {
                     }))
                   }
                   placeholder="tutorial, coding, react"
-                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent)"
+                  className="w-full rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-3 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent)"
                 />
               </div>
             </div>
 
             {/* Video File Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="video-file-input"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Video File <span className="text-(--accent)">*</span>
               </label>
               <div
                 onClick={() => videoInputRef.current?.click()}
                 onDrop={handleDrop(handleVideoChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
               >
                 {videoFile ? (
                   <div className="flex items-center gap-3">
@@ -240,6 +259,7 @@ const UploadVideo = () => {
                         e.stopPropagation();
                         setVideoFile(null);
                       }}
+                      aria-label="Remove selected video"
                       className="rounded-lg p-1.5 text-(--muted) hover:bg-(--surface-3) hover:text-(--text)"
                     >
                       <X size={16} />
@@ -261,6 +281,7 @@ const UploadVideo = () => {
                 )}
 
                 <input
+                  id="video-file-input"
                   ref={videoInputRef}
                   type="file"
                   accept="video/*"
@@ -274,14 +295,17 @@ const UploadVideo = () => {
 
             {/* Thumbnail Drop Zone */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="thumbnail-file-input"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Thumbnail Image <span className="text-(--accent)">*</span>
               </label>
               <div
                 onClick={() => thumbnailInputRef.current?.click()}
                 onDrop={handleDrop(handleThumbnailChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
               >
                 {thumbnailPreview ? (
                   <div className="flex flex-col items-center gap-3">
@@ -310,6 +334,7 @@ const UploadVideo = () => {
                 )}
 
                 <input
+                  id="thumbnail-file-input"
                   ref={thumbnailInputRef}
                   type="file"
                   accept="image/*"
@@ -331,7 +356,7 @@ const UploadVideo = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer shadow-lg shadow-(--accent-soft)"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer shadow-lg shadow-(--accent-soft)"
             >
               {loading ? (
                 <>

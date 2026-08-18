@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { X } from "lucide-react";
 
 const Modal = ({ open, onClose, title, children, maxWidth = "max-w-lg" }) => {
@@ -16,17 +16,17 @@ const Modal = ({ open, onClose, title, children, maxWidth = "max-w-lg" }) => {
     };
   }, [open]);
 
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+  const onKeyDown = useEffectEvent((e) => {
+    if (e.key === "Escape") onClose();
+  });
 
+  useEffect(() => {
     if (open) {
-      window.addEventListener("keydown", handleEsc);
+      window.addEventListener("keydown", onKeyDown);
     }
 
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [open, onClose]);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   if (!open) return null;
 
@@ -52,7 +52,7 @@ const Modal = ({ open, onClose, title, children, maxWidth = "max-w-lg" }) => {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--muted) transition-all duration-200 hover:bg-(--surface-3) hover:text-(--text)"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--muted) transition-colors duration-200 hover:bg-(--surface-3) hover:text-(--text)"
             aria-label="Close"
           >
             <X size={16} />

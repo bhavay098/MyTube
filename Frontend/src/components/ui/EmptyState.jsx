@@ -42,7 +42,7 @@ const EmptyState = ({
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="mt-5 rounded-full bg-(--accent) px-6 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
+          className="mt-5 rounded-full bg-(--accent) px-6 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
         >
           {actionLabel}
         </button>

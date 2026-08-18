@@ -215,10 +215,14 @@ const Settings = () => {
               Account & Bio
             </h2>
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="settings-fullname"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Full Name
               </label>
               <input
+                id="settings-fullname"
                 value={accountForm.fullName}
                 onChange={(event) =>
                   setAccountForm((current) => ({
@@ -226,15 +230,19 @@ const Settings = () => {
                     fullName: event.target.value,
                   }))
                 }
-                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 placeholder="Full name"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="settings-email"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Email
               </label>
               <input
+                id="settings-email"
                 value={accountForm.email}
                 onChange={(event) =>
                   setAccountForm((current) => ({
@@ -242,15 +250,19 @@ const Settings = () => {
                     email: event.target.value,
                   }))
                 }
-                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 placeholder="Email"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="settings-bio"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Channel Bio / Description
               </label>
               <textarea
+                id="settings-bio"
                 value={accountForm.bio}
                 onChange={(event) =>
                   setAccountForm((current) => ({
@@ -259,14 +271,14 @@ const Settings = () => {
                   }))
                 }
                 rows={3}
-                className="w-full resize-none rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full resize-none rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 placeholder="Tell viewers about you or your channel..."
               />
             </div>
             <button
               type="submit"
               disabled={accountLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
             >
               {accountLoading ? <Spinner size={14} /> : <Save size={14} />}
               Save Changes
@@ -283,10 +295,14 @@ const Settings = () => {
               Security
             </h2>
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="settings-oldpassword"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 Current Password
               </label>
               <input
+                id="settings-oldpassword"
                 type="password"
                 value={passwordForm.oldPassword}
                 onChange={(event) =>
@@ -295,15 +311,19 @@ const Settings = () => {
                     oldPassword: event.target.value,
                   }))
                 }
-                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 placeholder="Enter current password"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)">
+              <label
+                htmlFor="settings-newpassword"
+                className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-(--muted)"
+              >
                 New Password
               </label>
               <input
+                id="settings-newpassword"
                 type="password"
                 value={passwordForm.newPassword}
                 onChange={(event) =>
@@ -312,14 +332,14 @@ const Settings = () => {
                     newPassword: event.target.value,
                   }))
                 }
-                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                className="w-full rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                 placeholder="Enter new password"
               />
             </div>
             <button
               type="submit"
               disabled={passwordLoading}
-              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
             >
               {passwordLoading ? <Spinner size={14} /> : <Lock size={14} />}
               Update Password
