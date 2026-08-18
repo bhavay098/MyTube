@@ -22,6 +22,7 @@ import Spinner from "../components/ui/Spinner.jsx";
 import Modal from "../components/ui/Modal.jsx";
 import ConfirmDialog from "../components/ui/ConfirmDialog.jsx";
 import { SkeletonLine } from "../components/ui/Skeleton.jsx";
+import CustomVideoPlayer from "../components/video/player/CustomVideoPlayer.jsx";
 
 import {
   getVideoById,
@@ -66,6 +67,7 @@ const VideoDetail = () => {
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
   const [subscribing, setSubscribing] = useState(false);
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
 
   // Modal states
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -348,22 +350,47 @@ const VideoDetail = () => {
   }
 
   const isOwner = currentUser?._id === video?.owner?._id;
+  const nextVideo = relatedVideos.length > 0 ? relatedVideos[0] : null;
+
+  const handlePlayNext = () => {
+    if (nextVideo?._id) {
+      navigate(`/video/${nextVideo._id}`);
+    }
+  };
+
+  const playerComponent = (
+    <CustomVideoPlayer
+      src={video?.videoFile}
+      poster={video?.thumbnail}
+      title={video?.title}
+      hasNextVideo={!!nextVideo}
+      onNextVideo={handlePlayNext}
+      nextVideoTitle={nextVideo?.title}
+      isTheaterMode={isTheaterMode}
+      onToggleTheater={() => setIsTheaterMode((prev) => !prev)}
+      autoPlay={true}
+    />
+  );
 
   return (
     <Layout>
-      <div className="animate-fade-in mx-auto max-w-7xl">
+      <div
+        className={`animate-fade-in mx-auto ${
+          isTheaterMode ? "max-w-[1550px] space-y-6" : "max-w-7xl"
+        }`}
+      >
+        {/* Top Full-Width Player for Theater Mode */}
+        {isTheaterMode && (
+          <div className="w-full">
+            {playerComponent}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Main Video & Comments Column (2 cols on lg) */}
           <div className="space-y-6 lg:col-span-2">
-            {/* Video Player */}
-            <div className="overflow-hidden rounded-3xl border border-(--border) bg-black shadow-lg">
-              <video
-                className="aspect-video w-full"
-                controls
-                autoPlay
-                src={video?.videoFile}
-              />
-            </div>
+            {/* Standard Inline Player for Normal View */}
+            {!isTheaterMode && playerComponent}
 
             {/* Video Info Card */}
             <div className="rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
