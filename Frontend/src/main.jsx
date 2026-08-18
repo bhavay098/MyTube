@@ -16,9 +16,24 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           position="top-right"
           toastOptions={{
             style: {
-              background: "#18181b",
-              color: "white",
-              border: "1px solid #27272a",
+              background: "var(--surface)",
+              color: "var(--text)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-xl)",
+              boxShadow: "var(--shadow)",
+              fontSize: "14px",
+            },
+            success: {
+              iconTheme: {
+                primary: "var(--success)",
+                secondary: "var(--surface)",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "var(--error)",
+                secondary: "var(--surface)",
+              },
             },
           }}
         />

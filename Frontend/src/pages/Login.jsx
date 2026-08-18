@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Mail, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AuthLayout from "../components/auth/AuthLayout.jsx";
 import AuthInput from "../components/auth/AuthInput.jsx";
+import Spinner from "../components/ui/Spinner.jsx";
 
 import { loginUser } from "../services/auth.service.js";
 import { setUser } from "../store/authSlice.js";
@@ -63,6 +65,7 @@ const Login = () => {
           placeholder="Enter your email or username"
           value={formData.identifier}
           onChange={handleChange}
+          icon={Mail}
         />
 
         <AuthInput
@@ -72,20 +75,28 @@ const Login = () => {
           placeholder="Enter your password"
           value={formData.password}
           onChange={handleChange}
+          icon={Lock}
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-white text-black font-semibold py-3 rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? (
+            <>
+              <Spinner size={16} />
+              <span>Logging in...</span>
+            </>
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
 
-      <p className="text-zinc-400 text-sm mt-6 text-center">
-        Don’t have an account?{" "}
-        <Link to="/register" className="text-white font-medium">
+      <p className="mt-6 text-center text-sm text-(--muted)">
+        Don't have an account?{" "}
+        <Link to="/register" className="font-medium text-(--text) hover:text-(--accent) transition-colors">
           Register
         </Link>
       </p>

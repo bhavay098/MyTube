@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { User, AtSign, Mail, Lock, ImagePlus } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AuthLayout from "../components/auth/AuthLayout.jsx";
 import AuthInput from "../components/auth/AuthInput.jsx";
+import Spinner from "../components/ui/Spinner.jsx";
 
 import { loginUser, registerUser } from "../services/auth.service.js";
 import { setUser } from "../store/authSlice.js";
@@ -12,6 +14,7 @@ import { setUser } from "../store/authSlice.js";
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,7 +24,7 @@ const Register = () => {
   });
 
   const [avatar, setAvatar] = useState(null);
-
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -32,7 +35,24 @@ const Register = () => {
   };
 
   const handleAvatarChange = (e) => {
-    setAvatar(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setAvatar(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setAvatar(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
   };
 
   const handleSubmit = async (e) => {
@@ -94,6 +114,7 @@ const Register = () => {
           placeholder="Enter your full name"
           value={formData.fullName}
           onChange={handleChange}
+          icon={User}
         />
 
         <AuthInput
@@ -102,6 +123,7 @@ const Register = () => {
           placeholder="Choose username"
           value={formData.username}
           onChange={handleChange}
+          icon={AtSign}
         />
 
         <AuthInput
@@ -111,6 +133,7 @@ const Register = () => {
           placeholder="Enter your email"
           value={formData.email}
           onChange={handleChange}
+          icon={Mail}
         />
 
         <AuthInput
@@ -120,31 +143,78 @@ const Register = () => {
           placeholder="Enter your password"
           value={formData.password}
           onChange={handleChange}
+          icon={Lock}
         />
 
         <div>
-          <label className="block text-sm text-zinc-300 mb-2">Avatar</label>
+          <label className="mb-2 block text-sm font-medium text-(--muted)">
+            Avatar
+          </label>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="w-full text-sm text-zinc-400"
-          />
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-all duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+          >
+            {avatarPreview ? (
+              <div className="flex flex-col items-center gap-3">
+                <img
+                  src={avatarPreview}
+                  alt="Avatar preview"
+                  className="h-20 w-20 rounded-full object-cover ring-2 ring-(--border)"
+                />
+                <span className="text-xs text-(--muted)">
+                  Click or drag to change
+                </span>
+              </div>
+            ) : (
+              <>
+                <ImagePlus
+                  size={28}
+                  className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
+                />
+                <span className="text-sm text-(--muted)">
+                  Click or drag & drop your avatar
+                </span>
+                <span className="mt-1 text-xs text-(--muted-strong)">
+                  PNG, JPG up to 5MB
+                </span>
+              </>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+          </div>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-white text-black font-semibold py-3 rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
         >
-          {loading ? "Creating account..." : "Register"}
+          {loading ? (
+            <>
+              <Spinner size={16} />
+              <span>Creating account...</span>
+            </>
+          ) : (
+            "Register"
+          )}
         </button>
       </form>
 
-      <p className="text-zinc-400 text-sm mt-6 text-center">
+      <p className="mt-6 text-center text-sm text-(--muted)">
         Already have an account?{" "}
-        <Link to="/login" className="text-white font-medium">
+        <Link
+          to="/login"
+          className="font-medium text-(--text) transition-colors hover:text-(--accent)"
+        >
           Login
         </Link>
       </p>

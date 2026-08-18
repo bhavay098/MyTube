@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="mytube-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff0033" />
+      <stop offset="100%" stop-color="#ff3366" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#mytube-grad)" />
+  <path d="M19 15L34 24L19 33V15Z" fill="#ffffff" />
+</svg>

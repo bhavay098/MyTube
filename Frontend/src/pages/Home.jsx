@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout.jsx";
 
 import VideoGrid from "../components/video/VideoGrid.jsx";
+import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
+import EmptyState from "../components/ui/EmptyState.jsx";
 
 import { getAllVideos } from "../services/video.service.js";
 
@@ -40,15 +42,19 @@ const Home = () => {
   return (
     <Layout onSearch={fetchVideos}>
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="text-(--muted)">Loading videos...</div>
-        </div>
+        <SkeletonGrid count={8} />
       ) : videos.length === 0 ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="text-(--muted)">No videos found</div>
-        </div>
+        <EmptyState
+          icon="video"
+          title="No videos found"
+          description="Try searching for something else or upload the first video!"
+          actionLabel="Upload Video"
+          onAction={() => (window.location.href = "/upload")}
+        />
       ) : (
-        <VideoGrid videos={videos} />
+        <div className="animate-fade-in">
+          <VideoGrid videos={videos} />
+        </div>
       )}
     </Layout>
   );

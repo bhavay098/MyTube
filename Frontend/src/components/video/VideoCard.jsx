@@ -1,17 +1,49 @@
 import { Link } from "react-router-dom";
+import { format } from "timeago.js";
+import { Play } from "lucide-react";
+
+const formatDuration = (seconds) => {
+  if (!seconds && seconds !== 0) return "";
+  const totalSeconds = Math.floor(seconds);
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+  if (mins >= 60) {
+    const hrs = Math.floor(mins / 60);
+    const remainMins = mins % 60;
+    return `${hrs}:${String(remainMins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+};
 
 const VideoCard = ({ video }) => {
+  const duration = formatDuration(video?.duration);
+  const timeAgo = video?.createdAt ? format(video.createdAt) : "";
+
   return (
     <Link
       to={`/video/${video?._id}`}
-      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)"
+      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-all duration-300 hover:-translate-y-1 hover:border-(--accent) hover:shadow-(--shadow)"
     >
-      <div className="aspect-video overflow-hidden rounded-[1.1rem] bg-(--surface-2)">
+      <div className="relative aspect-video overflow-hidden rounded-[1.1rem] bg-(--surface-2)">
         <img
           src={video?.thumbnail}
           alt={video?.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
+
+        {/* Hover play overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/30">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <Play size={20} className="ml-0.5 text-black" fill="black" />
+          </div>
+        </div>
+
+        {/* Duration badge */}
+        {duration && (
+          <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+            {duration}
+          </span>
+        )}
       </div>
 
       <div className="mt-4 flex gap-3">
@@ -26,12 +58,18 @@ const VideoCard = ({ video }) => {
             {video?.title}
           </h3>
 
-          <p className="mt-1 text-sm font-medium text-(--muted)">
+          <p className="mt-1 text-sm font-medium text-(--muted) transition-colors group-hover:text-(--accent)">
             {video?.owner?.fullName}
           </p>
 
-          <div className="mt-1 flex items-center gap-2 text-sm text-(--muted-strong)">
-            <span>{video?.views} views</span>
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-(--muted-strong)">
+            <span>{video?.views ?? 0} views</span>
+            {timeAgo && (
+              <>
+                <span>•</span>
+                <span>{timeAgo}</span>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -21,6 +21,23 @@ import { getCurrentUser } from "./services/auth.service.js";
 import { setUser } from "./store/authSlice.js";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
+const SplashScreen = () => (
+  <div className="flex min-h-screen flex-col items-center justify-center bg-(--bg)">
+    <div className="animate-fade-in-scale flex flex-col items-center">
+      <div className="mb-6 text-4xl font-extrabold tracking-[0.12em]">
+        <span className="text-(--accent)">My</span>
+        <span className="text-(--text)">Tube</span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite] rounded-full bg-(--accent)" />
+        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite_0.15s] rounded-full bg-(--accent)" />
+        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite_0.3s] rounded-full bg-(--accent)" />
+      </div>
+    </div>
+  </div>
+);
+
 const App = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
@@ -56,11 +73,7 @@ const App = () => {
   }, [dispatch]);
 
   if (!authHydrated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-(--bg) text-(--muted)">
-        Loading...
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   return (

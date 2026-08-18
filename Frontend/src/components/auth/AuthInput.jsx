@@ -5,19 +5,32 @@ const AuthInput = ({
   value,
   onChange,
   name,
+  icon: Icon,
 }) => {
   return (
     <div>
-      <label className="block text-sm text-zinc-300 mb-2">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-(--muted)">
+        {label}
+      </label>
 
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        name={name}
-        className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-zinc-600 transition-all duration-200"
-      />
+      <div className="relative">
+        {Icon && (
+          <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-(--muted-strong)">
+            <Icon size={16} />
+          </div>
+        )}
+
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          name={name}
+          className={`w-full rounded-xl border border-(--border) bg-(--surface-2) ${
+            Icon ? "pl-11" : "px-4"
+          } py-3 pr-4 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]`}
+        />
+      </div>
     </div>
   );
 };
