@@ -166,14 +166,7 @@ const App = () => {
         }
       />
 
-      <Route
-        path="/channel/:username"
-        element={
-          <ProtectedRoute>
-            <ChannelProfile />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/channel/:username" element={<ChannelProfile />} />
     </Routes>
   );
 };

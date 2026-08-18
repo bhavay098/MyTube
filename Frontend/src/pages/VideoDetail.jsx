@@ -69,15 +69,21 @@ const VideoDetail = () => {
       const videoData = await getVideoById(videoId);
       setVideo(videoData);
 
-      if (currentUser?._id) {
-        const [commentsData, userPlaylists] = await Promise.all([
-          getVideoComments(videoId),
-          getUserPlaylists(currentUser._id),
-        ]);
-        setComments(commentsData?.comments || []);
-        setPlaylists(userPlaylists || []);
-      } else {
+      try {
+        const commentsData = await getVideoComments(videoId);
+        setComments(commentsData?.comments || commentsData || []);
+      } catch (err) {
         setComments([]);
+      }
+
+      if (currentUser?._id) {
+        try {
+          const userPlaylists = await getUserPlaylists(currentUser._id);
+          setPlaylists(userPlaylists || []);
+        } catch (err) {
+          setPlaylists([]);
+        }
+      } else {
         setPlaylists([]);
       }
     } catch (error) {
@@ -89,36 +95,18 @@ const VideoDetail = () => {
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
-      const run = async () => {
-        try {
-          setLoading(true);
-          const videoData = await getVideoById(videoId);
-          setVideo(videoData);
-
-          if (currentUser?._id) {
-            const [commentsData, userPlaylists] = await Promise.all([
-              getVideoComments(videoId),
-              getUserPlaylists(currentUser._id),
-            ]);
-            setComments(commentsData?.comments || []);
-            setPlaylists(userPlaylists || []);
-          } else {
-            setComments([]);
-            setPlaylists([]);
-          }
-        } catch (error) {
-          toast.error(error?.response?.data?.message || "Failed to load video");
-        } finally {
-          setLoading(false);
-        }
-      };
-      run();
+      fetchAll();
     }, 0);
     return () => window.clearTimeout(timerId);
   }, [videoId, currentUser]);
 
   const handlePostComment = async (event) => {
     event.preventDefault();
+    if (!currentUser) {
+      toast.error("Please login to post comments");
+      navigate("/login", { state: { from: `/video/${videoId}` } });
+      return;
+    }
     if (!commentText.trim()) return;
     try {
       setPostingComment(true);
@@ -133,6 +121,11 @@ const VideoDetail = () => {
   };
 
   const handleLikeVideo = async () => {
+    if (!currentUser) {
+      toast.error("Please login to like this video");
+      navigate("/login", { state: { from: `/video/${videoId}` } });
+      return;
+    }
     try {
       await toggleVideoLike(videoId);
       await fetchAll();
@@ -142,9 +135,15 @@ const VideoDetail = () => {
   };
 
   const handleSubscribe = async () => {
+    if (!currentUser) {
+      toast.error("Please login to subscribe to channels");
+      navigate("/login", { state: { from: `/video/${videoId}` } });
+      return;
+    }
     try {
       await toggleSubscription(video?.owner?._id);
       toast.success("Subscription updated");
+      await fetchAll();
     } catch (error) {
       toast.error(
         error?.response?.data?.message || "Failed to update subscription",
@@ -153,6 +152,11 @@ const VideoDetail = () => {
   };
 
   const handleLikeComment = async (commentId) => {
+    if (!currentUser) {
+      toast.error("Please login to like comments");
+      navigate("/login", { state: { from: `/video/${videoId}` } });
+      return;
+    }
     try {
       await toggleCommentLike(commentId);
       await fetchAll();
@@ -162,6 +166,11 @@ const VideoDetail = () => {
   };
 
   const handleAddToPlaylist = async () => {
+    if (!currentUser) {
+      toast.error("Please login to manage playlists");
+      navigate("/login", { state: { from: `/video/${videoId}` } });
+      return;
+    }
     if (!selectedPlaylistId) return;
     try {
       await addVideoToPlaylist(videoId, selectedPlaylistId);
@@ -408,94 +417,98 @@ const VideoDetail = () => {
           </h2>
 
           {currentUser?._id ? (
-            <>
-              <form
-                onSubmit={handlePostComment}
-                className="mt-4 flex items-start gap-3"
+            <form
+              onSubmit={handlePostComment}
+              className="mt-4 flex items-start gap-3"
+            >
+              <img
+                src={currentUser?.avatar}
+                alt={currentUser?.username}
+                className="mt-1 h-9 w-9 shrink-0 rounded-full object-cover"
+              />
+              <div className="flex flex-1 gap-2">
+                <input
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                  placeholder="Add a comment..."
+                  className="flex-1 rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                />
+                <button
+                  type="submit"
+                  disabled={!commentText.trim() || postingComment}
+                  className="flex items-center gap-1.5 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40"
+                >
+                  {postingComment ? <Spinner size={14} /> : <Send size={14} />}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-4">
+              <p className="text-sm text-(--muted)">
+                Sign in to leave a comment or join the discussion.
+              </p>
+              <Link
+                to="/login"
+                state={{ from: `/video/${videoId}` }}
+                className="inline-flex items-center justify-center rounded-full bg-(--accent) px-4 py-2 text-xs font-semibold text-white transition-all duration-200 hover:bg-(--accent-strong)"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
+
+          <div className="mt-5 space-y-3">
+            {comments.map((comment) => (
+              <article
+                key={comment._id}
+                className="animate-fade-in flex gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-4"
               >
                 <img
-                  src={currentUser?.avatar}
-                  alt={currentUser?.username}
-                  className="mt-1 h-9 w-9 shrink-0 rounded-full object-cover"
+                  src={comment?.owner?.avatar || "/default-avatar.png"}
+                  alt=""
+                  className="h-8 w-8 shrink-0 rounded-full object-cover"
                 />
-                <div className="flex flex-1 gap-2">
-                  <input
-                    value={commentText}
-                    onChange={(event) => setCommentText(event.target.value)}
-                    placeholder="Add a comment..."
-                    className="flex-1 rounded-xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-all duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!commentText.trim() || postingComment}
-                    className="flex items-center gap-1.5 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-(--accent-strong) disabled:opacity-40"
-                  >
-                    {postingComment ? <Spinner size={14} /> : <Send size={14} />}
-                  </button>
-                </div>
-              </form>
-
-              <div className="mt-5 space-y-3">
-                {comments.map((comment) => (
-                  <article
-                    key={comment._id}
-                    className="animate-fade-in flex gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-4"
-                  >
-                    <img
-                      src={comment?.owner?.avatar || currentUser?.avatar}
-                      alt=""
-                      className="h-8 w-8 shrink-0 rounded-full object-cover"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-(--text)">
-                          {comment?.owner?.username || "User"}
-                        </span>
-                        {comment?.createdAt && (
-                          <span className="text-xs text-(--muted-strong)">
-                            {format(comment.createdAt)}
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-sm text-(--text)">
-                        {comment.content}
-                      </p>
-                      <div className="mt-2 flex items-center gap-3">
-                        <button
-                          onClick={() => handleLikeComment(comment._id)}
-                          className="flex items-center gap-1 text-xs text-(--muted) transition-colors hover:text-(--accent)"
-                        >
-                          <Heart size={13} />
-                          {comment.likes || 0}
-                        </button>
-                        {currentUser?._id === comment?.owner?._id && (
-                          <button
-                            onClick={() => setDeleteCommentId(comment._id)}
-                            className="flex items-center gap-1 text-xs text-(--muted) transition-colors hover:text-(--error)"
-                          >
-                            <Trash2 size={13} />
-                            Delete
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-                {comments.length === 0 && (
-                  <p className="py-4 text-center text-sm text-(--muted)">
-                    No comments yet. Be the first to comment!
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-(--text)">
+                      {comment?.owner?.username || "User"}
+                    </span>
+                    {comment?.createdAt && (
+                      <span className="text-xs text-(--muted-strong)">
+                        {format(comment.createdAt)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm text-(--text)">
+                    {comment.content}
                   </p>
-                )}
-              </div>
-            </>
-          ) : (
-            <p className="mt-4 text-sm text-(--muted)">
-              <Link to="/login" className="text-(--accent) hover:underline">
-                Sign in
-              </Link>{" "}
-              to view and post comments.
-            </p>
-          )}
+                  <div className="mt-2 flex items-center gap-3">
+                    <button
+                      onClick={() => handleLikeComment(comment._id)}
+                      className="flex items-center gap-1 text-xs text-(--muted) transition-colors hover:text-(--accent)"
+                    >
+                      <Heart size={13} />
+                      {comment.likes || 0}
+                    </button>
+                    {currentUser?._id === comment?.owner?._id && (
+                      <button
+                        onClick={() => setDeleteCommentId(comment._id)}
+                        className="flex items-center gap-1 text-xs text-(--muted) transition-colors hover:text-(--error)"
+                      >
+                        <Trash2 size={13} />
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+            {comments.length === 0 && (
+              <p className="py-4 text-center text-sm text-(--muted)">
+                No comments yet. Be the first to comment!
+              </p>
+            )}
+          </div>
         </section>
       </div>
 

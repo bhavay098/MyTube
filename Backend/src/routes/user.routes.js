@@ -13,7 +13,7 @@ import {   // Import all user-related controller functions that handle the busin
     getWatchHistory
 } from "../controllers/user.controller.js";
 import { upload } from '../middlewares/multer.middleware.js'   // Import multer middleware for handling file uploads (images, videos, etc.)
-import { verifyJWT } from "../middlewares/auth.middleware.js";   // Import JWT verification middleware to protect routes (authentication)
+import { verifyJWT, optionalJWT } from "../middlewares/auth.middleware.js";   // Import JWT verification middleware to protect routes (authentication)
 
 // Create a new router instance to define routes
 const router = Router()
@@ -68,8 +68,8 @@ router.route('/avatar').patch(verifyJWT, upload.single('avatar'), updateUserAvat
 router.route('/cover-image').patch(verifyJWT, upload.single('coverImage'), updateUserCoverImage)
 
 // Get a user’s channel profile by username | :username is a URL parameter (e.g., /channel/johndoe)
-// verifyJWT is used to check if current user is subscribed to this channel
-router.route('/channel/:username').get(verifyJWT, getUserChannelProfile)
+// optionalJWT is used to check if current user is subscribed if logged in, but allows public viewing
+router.route('/channel/:username').get(optionalJWT, getUserChannelProfile)
 
 // Get user's video watch history. verifyJWT ensures user can only see their own watch history
 router.route('/watch-history').get(verifyJWT, getWatchHistory)

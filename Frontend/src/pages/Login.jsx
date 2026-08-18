@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Mail, Lock } from "lucide-react";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ import { setUser } from "../store/authSlice.js";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     identifier: "",
@@ -48,7 +49,9 @@ const Login = () => {
       dispatch(setUser(response.data.user));
       toast.success(response.message || "Login successful");
 
-      navigate("/");
+      const destination =
+        location.state?.from?.pathname || location.state?.from || "/";
+      navigate(destination, { replace: true });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {

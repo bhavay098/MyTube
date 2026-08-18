@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { User, AtSign, Mail, Lock, ImagePlus } from "lucide-react";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ import { setUser } from "../store/authSlice.js";
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -92,7 +93,9 @@ const Register = () => {
         `${registerResponse.message || "Account created successfully"} and logged in successfully`,
       );
 
-      navigate("/");
+      const destination =
+        location.state?.from?.pathname || location.state?.from || "/";
+      navigate(destination, { replace: true });
     } catch (error) {
       console.log(error);
 

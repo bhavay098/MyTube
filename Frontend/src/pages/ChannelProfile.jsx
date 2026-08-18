@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Users, UserCheck, UserPlus } from "lucide-react";
 import { useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import { toggleSubscription } from "../services/subscription.service.js";
 
 const ChannelProfile = () => {
   const { username } = useParams();
+  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,8 @@ const ChannelProfile = () => {
 
   const handleSubscribeToggle = async () => {
     if (!currentUser) {
-      toast.error("Please login to subscribe");
+      toast.error("Please login to subscribe to channels");
+      navigate("/login", { state: { from: `/channel/${username}` } });
       return;
     }
     if (!profile?._id) return;
