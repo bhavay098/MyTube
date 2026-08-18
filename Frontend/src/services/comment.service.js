@@ -12,14 +12,8 @@ export const addComment = async (videoId, content) => {
   return response.data.data;
 };
 
-export const updateComment = async (commentId, editedContent) => {
-  const response = await axiosInstance.patch(`/comments/${commentId}`, {
-    editedContent,
-  });
-  return response.data.data;
-};
-
 export const deleteComment = async (commentId) => {
   const response = await axiosInstance.delete(`/comments/${commentId}`);
   return response.data;
 };
+

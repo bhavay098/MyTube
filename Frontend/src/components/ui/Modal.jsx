@@ -5,64 +5,72 @@ const Modal = ({ open, onClose, title, children, maxWidth = "max-w-lg" }) => {
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (open) {
+      if (!dialog.open) {
+        dialog.showModal();
+      }
+    } else {
+      if (dialog.open) {
+        dialog.close();
+      }
+    }
   }, [open]);
 
-  const onKeyDown = useEffectEvent((e) => {
-    if (e.key === "Escape") onClose();
+  const onBackdropClick = useEffectEvent((e) => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    const isInDialog =
+      rect.top <= e.clientY &&
+      e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX &&
+      e.clientX <= rect.left + rect.width;
+    if (!isInDialog) {
+      onClose();
+    }
   });
 
   useEffect(() => {
-    if (open) {
-      window.addEventListener("keydown", onKeyDown);
-    }
+    const dialog = dialogRef.current;
+    if (!dialog || !open) return;
 
-    return () => window.removeEventListener("keydown", onKeyDown);
+    dialog.addEventListener("click", onBackdropClick);
+    return () => dialog.removeEventListener("click", onBackdropClick);
   }, [open]);
+
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute inset-0 bg-(--overlay) animate-[overlayFadeIn_0.2s_ease-out]"
-        aria-label="Close modal"
-      />
+    <dialog
+      ref={dialogRef}
+      aria-label={title}
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
+      className={`animate-fade-in-scale fixed inset-0 m-auto w-full ${maxWidth} rounded-2xl border border-(--border) bg-(--surface) p-6 text-(--text) shadow-2xl backdrop:bg-(--overlay) backdrop:animate-[overlayFadeIn_0.2s_ease-out]`}
+    >
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="text-lg font-semibold tracking-tight text-(--text)">{title}</h2>
 
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className={`animate-fade-in-scale relative w-full ${maxWidth} rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-2xl`}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight text-(--text)">{title}</h2>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--muted) transition-colors duration-200 hover:bg-(--surface-3) hover:text-(--text)"
-            aria-label="Close"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        {children}
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--muted) transition-colors duration-200 hover:bg-(--surface-3) hover:text-(--text)"
+          aria-label="Close"
+        >
+          <X size={16} />
+        </button>
       </div>
-    </div>
+
+      {children}
+    </dialog>
   );
 };
 
 export default Modal;
+

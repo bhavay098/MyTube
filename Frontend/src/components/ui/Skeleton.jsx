@@ -33,6 +33,5 @@ const SkeletonGrid = ({ count = 8 }) => {
 const SkeletonLine = ({ width = "w-full", height = "h-4" }) => {
   return <Skeleton className={`${width} ${height} rounded-md`} />;
 };
+export { Skeleton, SkeletonVideoCard, SkeletonGrid, SkeletonLine };
 
-export default Skeleton;
-export { SkeletonVideoCard, SkeletonGrid, SkeletonLine };
