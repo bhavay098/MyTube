@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 
 export const useVideoShortcuts = ({
-  playerRef,
-  videoRef,
   togglePlay,
   seekRelative,
   seekToPercent,

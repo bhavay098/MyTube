@@ -13,9 +13,10 @@ const subscriptionSchema = new Schema({
     
 }, { timestamps: true })
 
+// Compound unique index to prevent duplicate subscription documents
+subscriptionSchema.index({ subscriber: 1, channel: 1 }, { unique: true })
 
 // Create and export the Subscription model using the schema
-// This model can be used to create, read, update, and delete subscription records in the database
 export const Subscription = mongoose.model('Subscription', subscriptionSchema)
 
 

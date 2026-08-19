@@ -63,24 +63,34 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState(null);
 
-  const fetchDashboard = async () => {
-    try {
-      setLoading(true);
-      const [statsData, videosData] = await Promise.all([
-        getChannelStats(),
-        getChannelVideos({ limit: 50 }),
-      ]);
-      setStats(statsData);
-      setVideos(videosData?.videos || []);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to load dashboard");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        const [statsData, videosData] = await Promise.all([
+          getChannelStats(),
+          getChannelVideos({ limit: 50 }),
+        ]);
+        if (!isMounted) return;
+        setStats(statsData);
+        setVideos(videosData?.videos || []);
+      } catch (error) {
+        if (!isMounted) return;
+        toast.error(error?.response?.data?.message || "Failed to load dashboard");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchDashboard();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleTogglePublish = async (videoId) => {

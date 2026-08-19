@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { User, AtSign, Mail, Lock, ImagePlus } from "lucide-react";
@@ -32,6 +32,14 @@ const Register = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -39,11 +47,18 @@ const Register = () => {
     });
   };
 
+  const updateAvatarFile = (file) => {
+    avatarRef.current = file;
+    setAvatarPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      avatarRef.current = file;
-      setAvatarPreview(URL.createObjectURL(file));
+      updateAvatarFile(file);
     }
   };
 
@@ -51,8 +66,7 @@ const Register = () => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
-      avatarRef.current = file;
-      setAvatarPreview(URL.createObjectURL(file));
+      updateAvatarFile(file);
     }
   };
 

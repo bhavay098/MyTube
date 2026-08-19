@@ -319,8 +319,8 @@ const Landing = () => {
       <section className="border-y border-(--border) bg-(--surface)/50 py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {STATS.map((stat, i) => (
-              <div key={i} className="text-center">
+            {STATS.map((stat) => (
+              <div key={stat.label} className="text-center">
                 <p className="text-2xl font-bold tracking-tight text-(--accent) sm:text-4xl tabular-nums">
                   {stat.value}
                 </p>
@@ -398,11 +398,11 @@ const Landing = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map((feat, i) => {
+            {FEATURES.map((feat) => {
               const Icon = feat.icon;
               return (
                 <div
-                  key={i}
+                  key={feat.title}
                   className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-7 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1.5 hover:border-(--border-strong) hover:shadow-(--shadow)"
                 >
                   <div className="flex items-center justify-between">
@@ -440,9 +440,9 @@ const Landing = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {STEPS.map((step, i) => (
+            {STEPS.map((step) => (
               <div
-                key={i}
+                key={step.num}
                 className="relative rounded-3xl border border-(--border) bg-(--surface) p-8 shadow-sm"
               >
                 <span className="text-3xl sm:text-4xl font-bold text-(--accent)">

@@ -100,11 +100,11 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required");
   }
 
-  const queryCondition = {};
-  if (email) queryCondition.email = email.toLowerCase().trim();
-  else if (username) queryCondition.username = username.toLowerCase().trim();
+  const identifier = (email || username || "").toLowerCase().trim();
 
-  const user = await User.findOne(queryCondition);
+  const user = await User.findOne({
+    $or: [{ username: identifier }, { email: identifier }],
+  });
 
   if (!user) {
     throw new ApiError(404, "User does not exist");

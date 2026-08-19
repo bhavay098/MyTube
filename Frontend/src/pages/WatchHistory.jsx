@@ -34,20 +34,26 @@ const WatchHistory = () => {
   const [clearing, setClearing] = useState(false);
   const [removingId, setRemovingId] = useState(null);
 
-  const loadHistory = async () => {
-    try {
-      setLoading(true);
-      const data = await getWatchHistory();
-      setVideos(data || []);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to load history");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const loadHistory = async () => {
+      try {
+        setLoading(true);
+        const data = await getWatchHistory();
+        if (isMounted) setVideos(data || []);
+      } catch (error) {
+        if (isMounted) toast.error(error?.response?.data?.message || "Failed to load history");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
     loadHistory();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleRemoveSingle = async (videoId, e) => {

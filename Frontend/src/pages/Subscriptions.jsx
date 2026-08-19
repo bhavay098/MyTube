@@ -19,6 +19,8 @@ const Subscriptions = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       if (!user?._id) return;
       try {
@@ -26,18 +28,26 @@ const Subscriptions = () => {
           getUserChannelSubscribers(user._id),
           getSubscribedChannels(user._id),
         ]);
+        if (!isMounted) return;
         setSubscribers(subscribersData?.subscribers || []);
         setSubscriptions(subscriptionsData?.subscriptions || []);
       } catch (error) {
+        if (!isMounted) return;
         toast.error(
           error?.response?.data?.message || "Failed to load subscriptions",
         );
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user?._id]);
 
   if (loading) {

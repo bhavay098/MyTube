@@ -123,12 +123,60 @@ const VideoDetail = () => {
     } finally {
       setLoading(false);
     }
-  }, [videoId, currentUser?._id]);
+  }, [videoId, currentUser]);
 
   useEffect(() => {
-    fetchAll();
+    let isMounted = true;
+
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [videoData, relatedData] = await Promise.all([
+          getVideoById(videoId),
+          getRelatedVideos(videoId).catch(() => []),
+        ]);
+
+        if (!isMounted) return;
+        setVideo(videoData);
+        setRelatedVideos(relatedData || []);
+
+        try {
+          const commentsData = await getVideoComments(videoId);
+          if (isMounted) {
+            setComments(commentsData?.comments || commentsData || []);
+          }
+        } catch {
+          if (isMounted) setComments([]);
+        }
+
+        if (currentUser?._id) {
+          try {
+            const userPlaylists = await getUserPlaylists(currentUser._id);
+            if (isMounted) setPlaylists(userPlaylists || []);
+          } catch {
+            if (isMounted) setPlaylists([]);
+          }
+        } else {
+          if (isMounted) setPlaylists([]);
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast.error(error?.response?.data?.message || "Failed to load video");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadData();
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [fetchAll]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [videoId, currentUser]);
 
   const handlePostComment = async (event) => {
     event.preventDefault();

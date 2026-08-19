@@ -40,6 +40,11 @@ const errorHandler = (err, req, res, next) => {
     error = new ApiError(400, `Validation Error: ${messages.join(", ")}`);
   }
 
+  // Handle JWT errors (expired or invalid token)
+  if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
+    error = new ApiError(401, "Unauthorized: Access token is invalid or expired");
+  }
+
   // Handle Multer upload errors
   if (err.name === "MulterError") {
     if (err.code === "LIMIT_FILE_SIZE") {

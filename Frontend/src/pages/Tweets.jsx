@@ -64,12 +64,39 @@ const Tweets = () => {
         setLoading(false);
       }
     },
-    [activeTab, user?._id]
+    [activeTab, user]
   );
 
   useEffect(() => {
-    fetchTweets(activeTab);
-  }, [fetchTweets, activeTab]);
+    let isMounted = true;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+        if (activeTab === "my_posts" && user?._id) {
+          const data = await getUserTweets(user._id);
+          if (isMounted) setTweets(data || []);
+        } else {
+          const data = await getAllTweetsFeed();
+          if (isMounted) setTweets(data || []);
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast.error(error?.response?.data?.message || "Failed to load posts");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeTab, user]);
 
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);

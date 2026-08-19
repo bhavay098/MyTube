@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -53,6 +53,14 @@ const UploadVideo = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreview) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+    };
+  }, [thumbnailPreview]);
+
   const handleVideoChange = (file) => {
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file);
@@ -61,10 +69,17 @@ const UploadVideo = () => {
     }
   };
 
+  const updateThumbnailFile = (file) => {
+    thumbnailRef.current = file;
+    setThumbnailPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
+
   const handleThumbnailChange = (file) => {
     if (file && file.type.startsWith("image/")) {
-      thumbnailRef.current = file;
-      setThumbnailPreview(URL.createObjectURL(file));
+      updateThumbnailFile(file);
     } else if (file) {
       toast.error("Please upload a valid image file");
     }
@@ -303,7 +318,7 @@ const UploadVideo = () => {
               </label>
               <div
                 onClick={() => thumbnailInputRef.current?.click()}
-                onDrop={handleDrop(handleThumbnailChange)}
+                onDrop={(e) => handleDrop(handleThumbnailChange)(e)}
                 onDragOver={handleDragOver}
                 className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
               >

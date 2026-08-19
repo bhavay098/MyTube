@@ -24,5 +24,10 @@ const likeSchema = new Schema({
 
 }, { timestamps: true })
 
+// Compound unique indexes to prevent duplicate likes from race conditions
+likeSchema.index({ video: 1, likedBy: 1 }, { unique: true, sparse: true })
+likeSchema.index({ comment: 1, likedBy: 1 }, { unique: true, sparse: true })
+likeSchema.index({ tweet: 1, likedBy: 1 }, { unique: true, sparse: true })
+
 // Create and export the Like model using the schema
 export const Like = mongoose.model('Like', likeSchema)

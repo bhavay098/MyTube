@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Heart } from "lucide-react";
 
@@ -9,25 +10,34 @@ import EmptyState from "../components/ui/EmptyState.jsx";
 import { getLikedVideos } from "../services/like.service.js";
 
 const LikedVideos = () => {
+  const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchLikedVideos = async () => {
       try {
         const data = await getLikedVideos();
-        const likedVideoDocs = (data || [])
-          .map((item) => item.video)
-          .filter(Boolean);
+        if (!isMounted) return;
+        const likedVideoDocs = (data || []).flatMap((item) => (item.video ? [item.video] : []));
         setVideos(likedVideoDocs);
       } catch (error) {
+        if (!isMounted) return;
         toast.error(error?.response?.data?.message || "Failed to load liked videos");
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchLikedVideos();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -53,7 +63,7 @@ const LikedVideos = () => {
             title="No liked videos"
             description="Videos you like will appear here for easy playback"
             actionLabel="Discover Videos"
-            onAction={() => (window.location.href = "/explore")}
+            onAction={() => navigate("/explore")}
           />
         ) : (
           <VideoGrid videos={videos} />

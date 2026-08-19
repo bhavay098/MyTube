@@ -207,8 +207,9 @@ const Playlists = () => {
                 />
               </div>
               <button
+                type="submit"
                 disabled={createLoading}
-                className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50"
+                className="flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-50 cursor-pointer"
               >
                 {createLoading && <Spinner size={14} />}
                 Create
