@@ -105,6 +105,7 @@ const STEPS = [
 const Landing = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [trendingVideos, setTrendingVideos] = useState([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
 
@@ -184,20 +185,32 @@ const Landing = () => {
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
-            <Link
-              to="/login"
-              className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--border-strong) hover:bg-(--surface-2) sm:inline-flex"
-            >
-              Log in
-            </Link>
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/login"
+                  className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--border-strong) hover:bg-(--surface-2) sm:inline-flex"
+                >
+                  Log in
+                </Link>
 
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-(--accent-soft) transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
-            >
-              <span>Get Started</span>
-              <ArrowRight size={15} />
-            </Link>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-(--accent-soft) transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight size={15} />
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/home"
+                className="inline-flex items-center gap-2 rounded-full bg-(--accent) px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-(--accent-soft) transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong)"
+              >
+                <span>Go to Feed</span>
+                <ArrowRight size={15} />
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -230,19 +243,19 @@ const Landing = () => {
           {/* CTA Group */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              to="/register"
+              to={isAuthenticated ? "/home" : "/register"}
               className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/20 transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
             >
-              <span>Create Free Account</span>
+              <span>{isAuthenticated ? "Go to Video Feed" : "Create Free Account"}</span>
               <ArrowRight size={18} />
             </Link>
 
             <Link
-              to="/explore"
+              to={isAuthenticated ? "/home" : "/explore"}
               className="inline-flex items-center gap-2.5 rounded-full border border-(--border-strong) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) shadow-sm transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:bg-(--surface-2)"
             >
               <Compass size={18} className="text-(--accent)" />
-              <span>Explore Videos as Guest</span>
+              <span>{isAuthenticated ? "Browse Video Feed" : "Explore Videos as Guest"}</span>
             </Link>
           </div>
 
@@ -266,7 +279,7 @@ const Landing = () => {
                 {/* Center Big Play Button Mock */}
                 <div className="flex flex-col items-center justify-center my-auto">
                   <Link
-                    to="/explore"
+                    to={isAuthenticated ? "/home" : "/explore"}
                     className="group flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-(--accent) text-white shadow-2xl shadow-(--accent-soft) transition-transform transition-colors duration-300 hover:scale-110 hover:bg-(--accent-strong)"
                     aria-label="Start Watching"
                   >
@@ -474,19 +487,19 @@ const Landing = () => {
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  to="/register"
+                  to={isAuthenticated ? "/home" : "/register"}
                   className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/20 transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
                 >
-                  <span>Get Started Now</span>
+                  <span>{isAuthenticated ? "Go to Video Feed" : "Get Started Now"}</span>
                   <ArrowRight size={18} />
                 </Link>
 
                 <Link
-                  to="/explore"
+                  to={isAuthenticated ? "/home" : "/explore"}
                   className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:bg-(--surface-2)"
                 >
                   <Compass size={18} />
-                  <span>Browse Catalog</span>
+                  <span>{isAuthenticated ? "Browse Video Feed" : "Browse Catalog"}</span>
                 </Link>
               </div>
 
@@ -520,18 +533,31 @@ const Landing = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-6 text-sm text-(--muted)">
+              {isAuthenticated && (
+                <Link to="/home" className="hover:text-(--text) transition-colors">
+                  Feed
+                </Link>
+              )}
               <Link to="/explore" className="hover:text-(--text) transition-colors">
                 Explore
               </Link>
               <a href="#features" className="hover:text-(--text) transition-colors">
                 Features
               </a>
-              <Link to="/login" className="hover:text-(--text) transition-colors">
-                Sign In
-              </Link>
-              <Link to="/register" className="hover:text-(--text) transition-colors">
-                Sign Up
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link to="/login" className="hover:text-(--text) transition-colors">
+                    Sign In
+                  </Link>
+                  <Link to="/register" className="hover:text-(--text) transition-colors">
+                    Sign Up
+                  </Link>
+                </>
+              ) : (
+                <Link to="/dashboard" className="hover:text-(--text) transition-colors">
+                  Dashboard
+                </Link>
+              )}
             </div>
           </div>
         </div>

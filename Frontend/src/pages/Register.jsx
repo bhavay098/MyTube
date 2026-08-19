@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { User, AtSign, Mail, Lock, ImagePlus } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -19,6 +19,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const fileInputRef = useRef(null);
   const avatarRef = useRef(null);
 
@@ -28,6 +29,12 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -108,7 +115,7 @@ const Register = () => {
       );
 
       const destination =
-        location.state?.from?.pathname || location.state?.from || "/";
+        location.state?.from?.pathname || location.state?.from || "/home";
       navigate(destination, { replace: true });
     } catch (error) {
       console.log(error);

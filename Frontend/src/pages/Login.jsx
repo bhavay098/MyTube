@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Mail, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -15,6 +15,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     identifier: "",
@@ -22,6 +23,12 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -50,7 +57,7 @@ const Login = () => {
       toast.success(response.message || "Login successful");
 
       const destination =
-        location.state?.from?.pathname || location.state?.from || "/";
+        location.state?.from?.pathname || location.state?.from || "/home";
       navigate(destination, { replace: true });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
