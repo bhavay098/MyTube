@@ -361,7 +361,7 @@ const UploadVideo = () => {
               {loading ? (
                 <>
                   <Spinner size={16} />
-                  <span>Uploading to Cloudinary...</span>
+                  <span>Uploading video...</span>
                 </>
               ) : (
                 <>
