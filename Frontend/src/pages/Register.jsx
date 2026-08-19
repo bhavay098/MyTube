@@ -161,7 +161,7 @@ const Register = () => {
             onClick={() => fileInputRef.current?.click()}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+            className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
           >
             {avatarPreview ? (
               <div className="flex flex-col items-center gap-3">
@@ -178,7 +178,7 @@ const Register = () => {
               <>
                 <ImagePlus
                   size={28}
-                  className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
+                  className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--text)"
                 />
                 <span className="text-sm text-(--muted)">
                   Click or drag & drop your avatar

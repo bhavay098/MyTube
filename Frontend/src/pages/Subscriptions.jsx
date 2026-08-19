@@ -142,7 +142,7 @@ const Subscriptions = () => {
                 <Link
                   to={`/channel/${item?.channel?.username}`}
                   key={item._id}
-                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                  className="flex items-center gap-3 rounded-xl border border-(--border) bg-(--surface-2) p-3 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
                 >
                   {item?.channel?.avatar ? (
                     <img

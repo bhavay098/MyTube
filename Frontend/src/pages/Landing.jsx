@@ -22,17 +22,18 @@ import {
 } from "lucide-react";
 import { toggleTheme } from "../store/themeSlice.js";
 import { getAllVideos } from "../services/video.service.js";
+import { checkHealth } from "../services/healthcheck.service.js";
 import VideoCard from "../components/video/VideoCard.jsx";
 import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
 
 const FEATURES = [
   {
     icon: Video,
-    title: "Crystal-Clear Video Streaming",
+    title: "Seamless Video Streaming",
     description:
-      "High-performance video delivery with adaptive quality, seamless playback, customizable thumbnails, and smart watch history tracking.",
-    badge: "4K Ready",
-    color: "from-red-500/20 to-orange-500/20",
+      "High-performance video delivery with smooth playback, customizable thumbnails, and smart watch history tracking.",
+    badge: "Fast Streaming",
+    color: "from-rose-500/10 to-orange-500/10",
   },
   {
     icon: BarChart3,
@@ -77,7 +78,7 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: "4K HD", label: "Streaming Quality" },
+  { value: "Instant", label: "Video Playback" },
   { value: "0 ms", label: "Buffer Lag" },
   { value: "100%", label: "Free & Open for Creators" },
   { value: "24/7", label: "Community Engagement" },
@@ -108,6 +109,9 @@ const Landing = () => {
   const [loadingVideos, setLoadingVideos] = useState(true);
 
   useEffect(() => {
+    // Send non-blocking background ping to wake up Render server
+    checkHealth();
+
     const fetchTrending = async () => {
       try {
         setLoadingVideos(true);
@@ -174,7 +178,7 @@ const Landing = () => {
             <button
               type="button"
               onClick={() => dispatch(toggleTheme())}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--border-strong) hover:bg-(--surface-2)"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             >
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
@@ -182,7 +186,7 @@ const Landing = () => {
 
             <Link
               to="/login"
-              className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2) sm:inline-flex"
+              className="hidden rounded-full border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--border-strong) hover:bg-(--surface-2) sm:inline-flex"
             >
               Log in
             </Link>
@@ -201,33 +205,33 @@ const Landing = () => {
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28">
         {/* Ambient Glow Orbs */}
-        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] max-w-full rounded-full bg-gradient-to-tr from-(--accent-soft) via-(--accent-soft) to-transparent blur-[120px] opacity-70" />
+        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] max-w-full rounded-full bg-gradient-to-tr from-(--accent-soft) via-(--accent-soft) to-transparent blur-[120px] opacity-20" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-(--border-strong) bg-(--surface)/80 px-4 py-1.5 text-xs font-medium text-(--accent) backdrop-blur-md shadow-sm">
-            <Sparkles size={14} className="animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-(--border-strong) bg-(--surface)/80 px-4 py-1.5 text-xs font-medium text-(--muted) backdrop-blur-md shadow-sm">
+            <Sparkles size={14} className="animate-pulse text-(--accent)" />
             <span className="tracking-wide uppercase">The Next-Gen Creator & Video Hub</span>
           </div>
 
           {/* Main Title */}
           <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
             Where Content Meets <br />
-            <span className="bg-gradient-to-r from-(--accent) via-[#ff4d6a] to-(--accent-strong) bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-(--accent) to-rose-400 bg-clip-text text-transparent">
               Community & Growth
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="mx-auto mt-6 max-w-2xl text-base text-(--muted) sm:text-lg lg:text-xl leading-relaxed">
-            Experience ultra-smooth video streaming, engage directly through community tweets, manage playlists, and unlock deep real-time analytics in your custom Creator Studio.
+            Experience seamless video streaming, engage directly through community tweets, manage playlists, and unlock deep real-time analytics in your custom Creator Studio.
           </p>
 
           {/* CTA Group */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/register"
-              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+              className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/20 transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
             >
               <span>Create Free Account</span>
               <ArrowRight size={18} />
@@ -235,7 +239,7 @@ const Landing = () => {
 
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2.5 rounded-full border border-(--border-strong) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) shadow-sm transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
+              className="inline-flex items-center gap-2.5 rounded-full border border-(--border-strong) bg-(--surface) px-7 py-3.5 text-base font-semibold text-(--text) shadow-sm transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:bg-(--surface-2)"
             >
               <Compass size={18} className="text-(--accent)" />
               <span>Explore Videos as Guest</span>
@@ -255,7 +259,7 @@ const Landing = () => {
                   </div>
                   <div className="hidden sm:flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-xs text-white/80 backdrop-blur-md">
                     <Radio size={14} className="text-(--accent)" />
-                    <span>Ultra HD 4K Playback</span>
+                    <span>Seamless Streaming</span>
                   </div>
                 </div>
 
@@ -280,7 +284,7 @@ const Landing = () => {
                   </div>
                   <div className="flex items-center justify-between text-xs text-white/80">
                     <span className="font-mono">14:20 / 22:45</span>
-                    <span className="font-semibold text-white">Full HD 1080p60</span>
+                    <span className="font-semibold text-white">Seamless Playback</span>
                   </div>
                 </div>
               </div>
@@ -348,7 +352,7 @@ const Landing = () => {
 
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-medium text-(--text) transition-colors duration-200 hover:border-(--accent) hover:bg-(--surface-2) hover:text-(--accent) self-start md:self-auto"
+              className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-5 py-2.5 text-sm font-medium text-(--text) transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-2) self-start md:self-auto"
             >
               <span>View All Videos</span>
               <ArrowRight size={16} />
@@ -381,8 +385,8 @@ const Landing = () => {
       <section id="features" className="border-t border-(--border) bg-(--surface)/30 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-medium text-(--accent)">
-              <Sparkles size={14} />
+            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs font-medium text-(--muted)">
+              <Sparkles size={14} className="text-(--accent)" />
               <span>Platform Capabilities</span>
             </div>
             <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-(--text)">
@@ -399,7 +403,7 @@ const Landing = () => {
               return (
                 <div
                   key={i}
-                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-7 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1.5 hover:border-(--accent) hover:shadow-(--shadow)"
+                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-7 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1.5 hover:border-(--border-strong) hover:shadow-(--shadow)"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--accent-soft) text-(--accent) transition-transform duration-300 group-hover:scale-110">
@@ -457,8 +461,8 @@ const Landing = () => {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-[2.5rem] border border-(--border-strong) bg-gradient-to-br from-(--surface-2) via-(--surface) to-(--surface-2) p-8 sm:p-14 text-center shadow-2xl">
             {/* Ambient Glow */}
-            <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-(--accent-soft) blur-3xl opacity-70" />
-            <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-(--accent-soft) blur-3xl opacity-70" />
+            <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-(--accent-soft) blur-3xl opacity-25" />
+            <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-(--accent-soft) blur-3xl opacity-25" />
 
             <div className="relative z-10 max-w-2xl mx-auto">
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-(--text)">
@@ -471,7 +475,7 @@ const Landing = () => {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-(--accent-soft) transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-(--accent) px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/20 transition-colors duration-300 hover:-translate-y-1 hover:bg-(--accent-strong)"
                 >
                   <span>Get Started Now</span>
                   <ArrowRight size={18} />
@@ -479,7 +483,7 @@ const Landing = () => {
 
                 <Link
                   to="/explore"
-                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:bg-(--surface-2)"
+                  className="inline-flex items-center gap-2.5 rounded-full border border-(--border) bg-(--surface) px-7 py-3.5 text-base font-medium text-(--text) transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:bg-(--surface-2)"
                 >
                   <Compass size={18} />
                   <span>Browse Catalog</span>

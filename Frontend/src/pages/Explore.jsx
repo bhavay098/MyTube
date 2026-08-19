@@ -170,7 +170,7 @@ const Explore = () => {
                   className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200 cursor-pointer ${
                     isActive
                       ? "bg-(--accent) text-white shadow-md shadow-(--accent-soft)"
-                      : "border border-(--border) bg-(--surface) text-(--muted) hover:border-(--accent) hover:text-(--text)"
+                      : "border border-(--border) bg-(--surface) text-(--muted) hover:border-(--border-strong) hover:text-(--text)"
                   }`}
                 >
                   <Icon size={14} />
@@ -181,7 +181,7 @@ const Explore = () => {
           </div>
 
           {/* Decorative background glow */}
-          <div className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 rounded-full bg-(--accent-soft) blur-3xl opacity-60" />
+          <div className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 rounded-full bg-(--accent-soft) blur-3xl opacity-20" />
         </div>
 
         {/* Filter Bar */}

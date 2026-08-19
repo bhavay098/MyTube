@@ -112,7 +112,7 @@ const MobileSidebarDrawer = ({ open, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--accent) hover:bg-(--surface-2)"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--border) bg-(--surface) text-(--text) transition-colors duration-200 hover:-translate-y-0.5 hover:border-(--border-strong) hover:bg-(--surface-2)"
             aria-label="Close menu"
           >
             <X size={18} />

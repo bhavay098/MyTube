@@ -237,7 +237,7 @@ const UploadVideo = () => {
                 onClick={() => videoInputRef.current?.click()}
                 onDrop={handleDrop(handleVideoChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
               >
                 {videoFile ? (
                   <div className="flex items-center gap-3">
@@ -269,7 +269,7 @@ const UploadVideo = () => {
                   <>
                     <Film
                       size={36}
-                      className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
+                      className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--text)"
                     />
                     <span className="text-sm font-medium text-(--text)">
                       Click or drag & drop video file
@@ -305,7 +305,7 @@ const UploadVideo = () => {
                 onClick={() => thumbnailInputRef.current?.click()}
                 onDrop={handleDrop(handleThumbnailChange)}
                 onDragOver={handleDragOver}
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--accent) hover:bg-(--accent-soft)"
+                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--border) bg-(--surface-2) p-7 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
               >
                 {thumbnailPreview ? (
                   <div className="flex flex-col items-center gap-3">
@@ -322,7 +322,7 @@ const UploadVideo = () => {
                   <>
                     <ImagePlus
                       size={36}
-                      className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--accent)"
+                      className="mb-2 text-(--muted-strong) transition-colors group-hover:text-(--text)"
                     />
                     <span className="text-sm font-medium text-(--text)">
                       Click or drag & drop thumbnail image

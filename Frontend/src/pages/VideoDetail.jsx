@@ -470,7 +470,7 @@ const VideoDetail = () => {
 
                   <button
                     onClick={handleShare}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-medium text-(--text) transition-colors duration-200 hover:border-(--accent) hover:text-(--accent) cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-2) px-4 py-2 text-xs font-medium text-(--text) transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3) cursor-pointer"
                   >
                     <Share2 size={14} />
                     <span>Share</span>
@@ -498,7 +498,7 @@ const VideoDetail = () => {
                         onClick={handleAddToPlaylist}
                         disabled={!selectedPlaylistId}
                         aria-label="Add to playlist"
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--text) transition-colors duration-200 hover:border-(--accent) disabled:opacity-40 cursor-pointer"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-(--border) bg-(--surface-2) text-(--text) transition-colors duration-200 hover:border-(--border-strong) disabled:opacity-40 cursor-pointer"
                       >
                         <ListPlus size={15} />
                       </button>
@@ -699,7 +699,7 @@ const VideoDetail = () => {
                   <Link
                     key={rVideo._id}
                     to={`/video/${rVideo._id}`}
-                    className="group flex gap-3 rounded-2xl border border-(--border) bg-(--surface) p-2.5 transition-colors duration-200 hover:border-(--accent) hover:bg-(--surface-2)"
+                    className="group flex gap-3 rounded-2xl border border-(--border) bg-(--surface) p-2.5 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-2)"
                   >
                     <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-xl bg-(--surface-2)">
                       <img
@@ -715,7 +715,7 @@ const VideoDetail = () => {
                     </div>
 
                     <div className="min-w-0 flex-1 py-0.5">
-                      <h3 className="line-clamp-2 text-xs sm:text-sm font-medium leading-snug text-(--text) group-hover:text-(--accent) transition-colors">
+                      <h3 className="line-clamp-2 text-xs sm:text-sm font-medium leading-snug text-(--text) group-hover:text-(--text) transition-colors">
                         {rVideo?.title}
                       </h3>
                       <p className="mt-1 text-xs text-(--muted) truncate">

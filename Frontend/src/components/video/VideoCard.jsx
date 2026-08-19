@@ -22,7 +22,7 @@ const VideoCard = ({ video }) => {
   return (
     <Link
       to={`/video/${video?._id}`}
-      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:shadow-(--shadow)"
+      className="group block cursor-pointer overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:shadow-(--shadow)"
     >
       <div className="relative aspect-video overflow-hidden rounded-[1.1rem] bg-(--surface-2)">
         <img
@@ -58,7 +58,7 @@ const VideoCard = ({ video }) => {
             {video?.title}
           </h3>
 
-          <p className="mt-1 text-xs sm:text-sm text-(--muted) transition-colors group-hover:text-(--accent)">
+          <p className="mt-1 text-xs sm:text-sm text-(--muted) transition-colors group-hover:text-(--text)">
             {video?.owner?.fullName}
           </p>
 

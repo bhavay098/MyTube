@@ -15,10 +15,10 @@
   --text: #f1f1f1;
   --muted: #aaaaaa;
   --muted-strong: #717171;
-  --accent: #ff0033;
-  --accent-strong: #ff1744;
-  --accent-soft: rgba(255, 0, 51, 0.12);
-  --accent-gradient: linear-gradient(135deg, #ff0033 0%, #ff4d6a 100%);
+  --accent: #e53935;
+  --accent-strong: #ef4444;
+  --accent-soft: rgba(229, 57, 53, 0.08);
+  --accent-gradient: linear-gradient(135deg, #e53935 0%, #ef4444 100%);
   --shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.16);
 
@@ -28,7 +28,7 @@
   --warning: #f59e0b;
   --warning-soft: rgba(245, 158, 11, 0.12);
   --error: #ef4444;
-  --error-soft: rgba(239, 68, 68, 0.12);
+  --error-soft: rgba(239, 68, 68, 0.08);
   --info: #3b82f6;
   --info-soft: rgba(59, 130, 246, 0.12);
 
@@ -50,21 +50,21 @@
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f9f9f9;
+  --bg: #f4f5f8;
   --surface: #ffffff;
-  --surface-2: #f2f2f2;
-  --surface-3: #eaeaea;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.15);
-  --text: #0f0f0f;
-  --muted: #4d4d4d;
-  --muted-strong: #6b6b6b;
-  --accent: #cc0000;
-  --accent-strong: #e60023;
-  --accent-soft: rgba(204, 0, 0, 0.08);
-  --accent-gradient: linear-gradient(135deg, #cc0000 0%, #ff4d6a 100%);
-  --shadow: 0 18px 42px rgba(0, 0, 0, 0.08);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --surface-2: #e9ecf0;
+  --surface-3: #dde2e7;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text: #1e242c;
+  --muted: #5e6673;
+  --muted-strong: #8a93a0;
+  --accent: #d32f2f;
+  --accent-strong: #b71c1c;
+  --accent-soft: rgba(211, 47, 47, 0.07);
+  --accent-gradient: linear-gradient(135deg, #d32f2f 0%, #e53935 100%);
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
 
   --success: #16a34a;
   --success-soft: rgba(22, 163, 74, 0.08);
@@ -75,10 +75,10 @@
   --info: #2563eb;
   --info-soft: rgba(37, 99, 235, 0.08);
 
-  --skeleton: #e5e5e5;
-  --skeleton-shine: #f0f0f0;
+  --skeleton: #e4e7eb;
+  --skeleton-shine: #f0f2f5;
 
-  --overlay: rgba(0, 0, 0, 0.4);
+  --overlay: rgba(15, 23, 42, 0.35);
 }
 
 * {

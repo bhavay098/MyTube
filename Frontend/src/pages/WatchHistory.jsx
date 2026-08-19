@@ -126,7 +126,7 @@ const WatchHistory = () => {
               return (
                 <div
                   key={video._id}
-                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent) hover:shadow-(--shadow)"
+                  className="group relative overflow-hidden rounded-3xl border border-(--border) bg-(--surface) p-3 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong) hover:shadow-(--shadow)"
                 >
                   <Link to={`/video/${video._id}`} className="block">
                     <div className="relative aspect-video overflow-hidden rounded-[1.1rem] bg-(--surface-2)">

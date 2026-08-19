@@ -228,7 +228,7 @@ const ChannelProfile = () => {
             <Link
               key={playlist._id}
               to="/playlists"
-              className="group rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--accent)"
+              className="group rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) transition-transform transition-colors duration-300 hover:-translate-y-1 hover:border-(--border-strong)"
             >
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-(--surface-2)">
                 {playlist.videos?.[0]?.thumbnail ? (

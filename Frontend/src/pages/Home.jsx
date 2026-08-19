@@ -7,6 +7,7 @@ import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
 import EmptyState from "../components/ui/EmptyState.jsx";
 
 import { getAllVideos } from "../services/video.service.js";
+import { checkHealth } from "../services/healthcheck.service.js";
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
@@ -32,6 +33,8 @@ const Home = () => {
   };
 
   useEffect(() => {
+    checkHealth();
+
     const timerId = window.setTimeout(() => {
       fetchVideos();
     }, 0);
