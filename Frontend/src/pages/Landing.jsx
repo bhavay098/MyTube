@@ -19,12 +19,27 @@ import {
   CheckCircle2,
   Tv,
   Radio,
+  Volume2,
+  Maximize2,
 } from "lucide-react";
 import { toggleTheme } from "../store/themeSlice.js";
 import { getAllVideos } from "../services/video.service.js";
 import { checkHealth } from "../services/healthcheck.service.js";
 import VideoCard from "../components/video/VideoCard.jsx";
 import { SkeletonGrid } from "../components/ui/Skeleton.jsx";
+
+const formatDuration = (seconds) => {
+  if (!seconds && seconds !== 0) return "18:42";
+  const totalSeconds = Math.floor(seconds);
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+  if (mins >= 60) {
+    const hrs = Math.floor(mins / 60);
+    const remainMins = mins % 60;
+    return `${hrs}:${String(remainMins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+};
 
 const FEATURES = [
   {
@@ -132,6 +147,8 @@ const Landing = () => {
 
     fetchTrending();
   }, []);
+
+  const featuredVideo = trendingVideos.length > 0 ? trendingVideos[0] : null;
 
   return (
     <div className="min-h-screen bg-(--bg) text-(--text) selection:bg-(--accent) selection:text-white">
@@ -259,72 +276,139 @@ const Landing = () => {
             </Link>
           </div>
 
-          {/* Hero Visual Mockup Preview */}
-          <div className="relative mx-auto mt-14 max-w-5xl">
-            <div className="relative overflow-hidden rounded-3xl border border-(--border-strong) bg-(--surface) p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
-              {/* Fake Video Player Bar */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-(--surface-2) flex flex-col justify-between p-4 sm:p-6">
-                {/* Top Overlay Badge */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
-                    <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                    <span>MyTube Live Experience</span>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-xs text-white/80 backdrop-blur-md">
-                    <Radio size={14} className="text-(--accent)" />
-                    <span>Seamless Streaming</span>
-                  </div>
-                </div>
+            {/* Hero Visual Mockup Preview */}
+            <div className="relative mx-auto mt-14 max-w-5xl mb-12 sm:mb-16">
+              {/* Ambient Glow behind the player */}
+              <div className="pointer-events-none absolute -inset-2 sm:-inset-4 rounded-3xl bg-gradient-to-r from-(--accent)/25 via-rose-500/15 to-amber-500/15 blur-2xl opacity-70 transition-opacity duration-500" />
 
-                {/* Center Big Play Button Mock */}
-                <div className="flex flex-col items-center justify-center my-auto">
-                  <Link
-                    to={isAuthenticated ? "/home" : "/explore"}
-                    className="group flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-(--accent) text-white shadow-2xl shadow-(--accent-soft) transition-transform transition-colors duration-300 hover:scale-110 hover:bg-(--accent-strong)"
-                    aria-label="Start Watching"
-                  >
-                    <Play size={28} className="ml-1 fill-white" />
-                  </Link>
-                  <span className="mt-4 text-xs sm:text-sm font-medium text-white/90 drop-shadow">
-                    Click to launch video catalog
-                  </span>
-                </div>
+              {/* Main Player Card */}
+              <div className="group relative rounded-3xl border border-(--border-strong) bg-(--surface) p-3 sm:p-4 shadow-2xl backdrop-blur-xl transition-colors duration-300 hover:border-(--accent)/40">
+                {/* Video Player Screen (overflow-hidden scoped to the screen) */}
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex flex-col justify-between p-4 sm:p-6 select-none">
+                  {/* Dynamic Video Poster or Stylized Cinematic Backdrop */}
+                  {featuredVideo?.thumbnail ? (
+                    <img
+                      src={featuredVideo.thumbnail}
+                      alt={featuredVideo.title}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                  ) : (
+                    /* Fallback decorative studio visual (never plain gray) */
+                    <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-neutral-950 via-zinc-900 to-black">
+                      <div className="absolute -left-1/4 -top-1/4 h-3/4 w-3/4 rounded-full bg-(--accent)/15 blur-3xl" />
+                      <div className="absolute -right-1/4 -bottom-1/4 h-3/4 w-3/4 rounded-full bg-blue-600/10 blur-3xl" />
+                      <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-60" />
+                    </div>
+                  )}
 
-                {/* Bottom Player Controls Mock */}
-                <div className="space-y-2">
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
-                    <div className="h-full w-2/3 rounded-full bg-(--accent)" />
+                  {/* High-contrast multi-stop gradient vignette */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/75 pointer-events-none" />
+
+                  {/* Top Player Status Bar */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md backdrop-blur-md">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+                      </span>
+                      <span>{featuredVideo ? "Featured Spotlight" : "MyTube 4K Live Experience"}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-md border border-white/15 bg-black/50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-md">
+                        4K HDR
+                      </span>
+                      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-(--accent)/30 bg-(--accent)/20 px-2.5 py-1 text-[11px] font-medium text-red-200 backdrop-blur-md">
+                        <Radio size={12} className="text-(--accent) animate-pulse" />
+                        <span>Ultra Low Latency</span>
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-white/80">
-                    <span className="font-mono">14:20 / 22:45</span>
-                    <span className="font-semibold text-white">Seamless Playback</span>
+
+                  {/* Center Play Interaction Overlay */}
+                  <div className="relative z-10 flex flex-col items-center justify-center my-auto text-center px-4 py-2">
+                    <Link
+                      to={
+                        featuredVideo
+                          ? `/video/${featuredVideo._id}`
+                          : isAuthenticated
+                            ? "/home"
+                            : "/explore"
+                      }
+                      className="group/play flex flex-col items-center justify-center gap-3 transition-transform duration-300 hover:scale-105"
+                      aria-label="Play Featured Video"
+                    >
+                      <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-(--accent) text-white shadow-[0_0_35px_rgba(229,57,53,0.6)] transition-all duration-300 group-hover/play:scale-110 group-hover/play:bg-(--accent-strong) group-hover/play:shadow-[0_0_55px_rgba(229,57,53,0.9)]">
+                        <Play size={28} className="ml-1 fill-white sm:h-8 sm:w-8" />
+                      </div>
+
+                      <div className="max-w-xl">
+                        <p className="text-sm sm:text-base lg:text-lg font-bold text-white drop-shadow-md line-clamp-1">
+                          {featuredVideo?.title || "Explore Trending Creators, Videos & Micro-Tweets"}
+                        </p>
+                        <p className="text-xs sm:text-sm text-white/80 mt-1 drop-shadow flex items-center justify-center gap-1.5">
+                          {featuredVideo?.owner?.fullName ? (
+                            <span>By {featuredVideo.owner.fullName} • Click to Watch Now</span>
+                          ) : (
+                            <span>Click to launch high-definition playback</span>
+                          )}
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+
+                  {/* Bottom Player Timeline & Controls Bar */}
+                  <div className="relative z-10 space-y-2.5">
+                    {/* Scrub bar */}
+                    <div className="relative h-1.5 sm:h-2 w-full overflow-hidden rounded-full bg-white/25 backdrop-blur-sm">
+                      <div className="absolute left-0 top-0 h-full w-3/4 rounded-full bg-white/30" />
+                      <div className="relative h-full w-2/5 rounded-full bg-gradient-to-r from-red-600 to-(--accent)" />
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-white/90">
+                      <div className="flex items-center gap-3 font-mono text-[11px] sm:text-xs text-white/85">
+                        <span>
+                          05:18 / {featuredVideo ? formatDuration(featuredVideo.duration) : "22:45"}
+                        </span>
+                        <div className="hidden sm:flex items-center gap-1.5 text-white/70 font-sans">
+                          <Volume2 size={13} />
+                          <span className="text-[11px]">Stereo 320k</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="hidden sm:inline-block text-[11px] font-medium text-white/70">
+                          1080p60 • Seamless
+                        </span>
+                        <Maximize2 size={14} className="text-white/80" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Stat Pill 1 (Left) */}
-              <div className="hidden sm:flex absolute -bottom-6 -left-6 items-center gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3.5 shadow-2xl backdrop-blur-xl animate-fade-in">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent)">
+              {/* Floating Stat Pill 1 (Left - position outside overflow-hidden with elevation) */}
+              <div className="hidden sm:flex absolute -bottom-5 sm:-bottom-6 left-6 lg:left-8 z-20 items-center gap-3 rounded-2xl border border-(--border-strong) bg-(--surface)/95 px-4 py-3 shadow-[0_16px_36px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent)">
                   <TrendingUp size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs text-(--muted)">Engagement Rate</p>
-                  <p className="text-sm font-semibold text-(--text)">99.4% Positive</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-(--muted)">Live Audience</p>
+                  <p className="text-sm font-bold text-(--text)">99.4% Positive</p>
                 </div>
               </div>
 
-              {/* Floating Stat Pill 2 (Right) */}
-              <div className="hidden sm:flex absolute -bottom-6 -right-6 items-center gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3.5 shadow-2xl backdrop-blur-xl animate-fade-in">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              {/* Floating Stat Pill 2 (Right - position outside overflow-hidden with elevation) */}
+              <div className="hidden sm:flex absolute -bottom-5 sm:-bottom-6 right-6 lg:right-8 z-20 items-center gap-3 rounded-2xl border border-(--border-strong) bg-(--surface)/95 px-4 py-3 shadow-[0_16px_36px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
                   <Users size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs text-(--muted)">Creator Community</p>
-                  <p className="text-sm font-semibold text-(--text)">Worldwide Audience</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-(--muted)">Creator Community</p>
+                  <p className="text-sm font-bold text-(--text)">Global Network</p>
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </section>
 
