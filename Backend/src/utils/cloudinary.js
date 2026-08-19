@@ -35,19 +35,23 @@ const uploadOnCloudinary = async (localFilePath) => {
 /**
  * delete a file from Cloudinary
  * @param {string} publicId - The public_id of the file in Cloudinary
+ * @param {string} resourceType - Type of resource: 'image' | 'video' | 'raw' (default: 'image')
  * @returns {object|null} - Returns Cloudinary response object if successful, or null if failed.
  */
 
-const deleteFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (publicId, resourceType = 'image') => {
+    if (!publicId) return null   // If no publicId is provided, exit early
     try {
-        if (!publicId) return null   // If no publicId is provided, exit early
-        // delete the file from cloudinary
-        const response = await cloudinary.uploader.destroy(publicId, { resource_type: 'auto' })   // "resource_type: 'auto'" allows images, videos, pdfs, etc.
-        return response;   // Response will contain { result: 'ok' } if deleted
+        // delete the file from cloudinary (destroy requires explicit resource_type: image, video, or raw)
+        const response = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
+        if (response?.result !== 'ok' && response?.result !== 'not found') {
+            throw new Error(`Cloudinary deletion failed with result: ${response?.result || 'unknown error'}`)
+        }
+        return response;   // Response will contain { result: 'ok' } or { result: 'not found' }
 
     } catch (error) {
         console.error('Error deleting file from Cloudinary:', error);
-        return null;   // Return null so the calling function knows deletion failed
+        throw error;   // Re-throw error so the database deletion is aborted
     }
 }
 

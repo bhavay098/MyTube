@@ -442,14 +442,18 @@ const deleteVideo = asyncHandler(async (req, res) => {
         throw new ApiError(403, 'You are not authorized to delete this video')
     }
 
-    // Delete the video document
+    // 1. Clean up Cloudinary media assets first (if Cloudinary fails, DB document is kept intact)
+    if (video.videoFilePublicId) {
+        await deleteFromCloudinary(video.videoFilePublicId, 'video')
+    }
+    if (video.thumbnailPublicId) {
+        await deleteFromCloudinary(video.thumbnailPublicId, 'image')
+    }
+
+    // 2. Once storage assets are successfully removed, delete from MongoDB
     await Video.findByIdAndDelete(videoId)
 
-    // Clean up Cloudinary assets
-    if (video.videoFilePublicId) await deleteFromCloudinary(video.videoFilePublicId)
-    if (video.thumbnailPublicId) await deleteFromCloudinary(video.thumbnailPublicId)
-
-    // Cascade clean up comments, likes, and remove from all playlists & watch histories
+    // 3. Cascade clean up comments, likes, and remove from all playlists & watch histories
     await Promise.allSettled([
         Comment.deleteMany({ video: videoId }),
         Like.deleteMany({ video: videoId }),
