@@ -5,7 +5,6 @@ import { useVideoPlayer } from "./useVideoPlayer.js";
 const CustomVideoPlayer = ({
   src,
   poster,
-  title,
   hasNextVideo = false,
   onNextVideo,
   nextVideoTitle = "",
@@ -13,41 +12,24 @@ const CustomVideoPlayer = ({
   onToggleTheater,
   autoPlay = true,
 }) => {
+  const player = useVideoPlayer({
+    hasNextVideo,
+    onNextVideo,
+    onToggleTheater,
+  });
+
   const {
     containerRef,
     videoRef,
     isPlaying,
-    currentTime,
-    duration,
-    bufferedEnd,
-    volume,
-    isMuted,
-    playbackSpeed,
-    isLooping,
-    isAutoplayNext,
-    setIsAutoplayNext,
     isBuffering,
     showControls,
     setShowControls,
     isFullscreen,
     feedback,
-    isEnded,
-    isPiPSupported,
-    togglePlay,
-    handleSeek,
-    handleVolumeChange,
-    toggleMute,
-    handleSpeedChange,
-    toggleLoop,
-    toggleFullscreen,
-    togglePiP,
     resetHideTimer,
     videoProps,
-  } = useVideoPlayer({
-    hasNextVideo,
-    onNextVideo,
-    onToggleTheater,
-  });
+  } = player;
 
   return (
     <div
@@ -75,33 +57,13 @@ const CustomVideoPlayer = ({
 
       {/* Control Bar Overlay */}
       <PlayerControlBar
-        isPlaying={isPlaying}
-        isEnded={isEnded}
-        onTogglePlay={togglePlay}
+        player={player}
+        isVisible={showControls || !isPlaying}
         hasNextVideo={hasNextVideo}
         onNextVideo={onNextVideo}
         nextVideoTitle={nextVideoTitle}
-        volume={volume}
-        isMuted={isMuted}
-        onVolumeChange={handleVolumeChange}
-        onToggleMute={toggleMute}
-        currentTime={currentTime}
-        duration={duration}
-        bufferedEnd={bufferedEnd}
-        onSeek={handleSeek}
-        isAutoplayNext={isAutoplayNext}
-        onToggleAutoplayNext={() => setIsAutoplayNext((prev) => !prev)}
-        playbackSpeed={playbackSpeed}
-        onSpeedChange={handleSpeedChange}
-        isLooping={isLooping}
-        onToggleLoop={toggleLoop}
-        isPiPSupported={isPiPSupported}
-        onTogglePiP={togglePiP}
         isTheaterMode={isTheaterMode}
         onToggleTheater={onToggleTheater}
-        isFullscreen={isFullscreen}
-        onToggleFullscreen={toggleFullscreen}
-        isVisible={showControls || !isPlaying}
       />
     </div>
   );

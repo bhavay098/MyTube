@@ -31,24 +31,20 @@ export const useVideoPlayer = ({
   const [isMuted, setIsMuted] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [isLooping, setIsLooping] = useState(false);
-  const [isAutoplayNext, setIsAutoplayNextState] = useState(getStoredAutoplay);
+  const [isAutoplayNext, setIsAutoplayNext] = useState(getStoredAutoplay);
 
-  const setIsAutoplayNext = useCallback((updater) => {
-    setIsAutoplayNextState((prev) => {
-      const nextVal = typeof updater === "function" ? updater(prev) : updater;
-      try {
-        localStorage.setItem("mytube_autoplay", String(nextVal));
-      } catch {
-        // ignore
-      }
-      return nextVal;
-    });
-  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("mytube_autoplay", String(isAutoplayNext));
+    } catch {
+      // ignore
+    }
+  }, [isAutoplayNext]);
 
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === "mytube_autoplay" && e.newValue !== null) {
-        setIsAutoplayNextState(e.newValue === "true");
+        setIsAutoplayNext(e.newValue === "true");
       }
     };
     window.addEventListener("storage", handleStorageChange);
