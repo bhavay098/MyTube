@@ -17,6 +17,7 @@ export const registerUser = async (formData) => {
 
 export const getCurrentUser = async () => {
   const response = await axiosInstance.get("/users/current-user", {
+    skipAuthRefresh: true,
     suppressAuthRedirect: true,
   });
 

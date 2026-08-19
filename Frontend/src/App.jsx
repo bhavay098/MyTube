@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
 import Home from "./pages/Home.jsx";
-import Landing from "./pages/Landing.jsx";
 import Explore from "./pages/Explore.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -23,47 +22,27 @@ import { getCurrentUser } from "./services/auth.service.js";
 import { setUser } from "./store/authSlice.js";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
-const SplashScreen = () => (
-  <div className="flex min-h-screen flex-col items-center justify-center bg-(--bg)">
-    <div className="animate-fade-in-scale flex flex-col items-center">
-      <div className="mb-6 text-4xl font-bold tracking-tight">
-        <span className="text-(--accent)">My</span>
-        <span className="text-(--text)">Tube</span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite] rounded-full bg-(--accent)" />
-        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite_0.15s] rounded-full bg-(--accent)" />
-        <div className="h-2 w-2 animate-[pulse_1s_ease-in-out_infinite_0.3s] rounded-full bg-(--accent)" />
-      </div>
-    </div>
-  </div>
-);
-
 const App = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
-  const { isAuthenticated } = useSelector((state) => state.auth);
-  const [authHydrated, setAuthHydrated] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Non-blocking background session restoration
   useEffect(() => {
     let isMounted = true;
 
     const hydrateAuth = async () => {
       try {
         const response = await getCurrentUser();
-        dispatch(setUser(response?.data));
+        if (isMounted && response?.data) {
+          dispatch(setUser(response.data));
+        }
       } catch (error) {
         if (error?.response?.status !== 401) {
           console.error("Failed to hydrate auth state", error);
-        }
-      } finally {
-        if (isMounted) {
-          setAuthHydrated(true);
         }
       }
     };
@@ -75,16 +54,9 @@ const App = () => {
     };
   }, [dispatch]);
 
-  if (!authHydrated) {
-    return <SplashScreen />;
-  }
-
   return (
     <Routes>
-      <Route
-        path="/"
-        element={isAuthenticated ? <Home /> : <Landing />}
-      />
+      <Route path="/" element={<Home />} />
 
       <Route path="/explore" element={<Explore />} />
 
