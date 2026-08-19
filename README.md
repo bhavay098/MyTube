@@ -148,10 +148,16 @@ Keep environment files and credentials private. The MongoDB database used by the
 | `npm run lint`    | Run ESLint                           |
 | `npm run preview` | Preview the production build locally |
 
-## Authentication and uploads
+## Demo flow
 
-The frontend sends requests with credentials enabled so the backend can manage authentication cookies. When an access token expires, the Axios client attempts a refresh-token request before redirecting an unauthenticated user to login. Video and profile media are uploaded through Multer and stored with Cloudinary.
+Use the following flow to explore the main application features:
 
-## Project status
-
-MyTube is feature-complete and deployed. The README documents the final application structure, local development workflow, and production-facing services.
+1. Open the [live App](https://mytube.bhavaynagpal.com/) and register a new account, or log in with an existing account.
+2. Browse the home page and Explore section to search for and discover published videos.
+3. Open a video to watch it, like it, add a comment, and verify that views and watch history are updated.
+4. Visit a channel profile to view its videos and subscribe to the creator.
+5. Open the Dashboard to upload a video, add its thumbnail and metadata, then publish it.
+6. Create a playlist and save videos for later access from the Playlists page.
+7. Visit Tweets to create a post, browse other posts, and interact with them.
+8. Use Liked Videos, Subscriptions, and Watch History to revisit personalized content.
+9. Open Settings to update profile details, change the theme, or manage account preferences.
