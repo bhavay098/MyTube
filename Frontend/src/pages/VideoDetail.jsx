@@ -446,7 +446,7 @@ const VideoDetail = () => {
 
             {/* Video Info Card */}
             <div className="rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) sm:p-6">
-              <h1 className="text-xl font-semibold tracking-tight text-(--text) sm:text-2xl leading-snug">
+              <h1 className="text-lg font-medium tracking-tight text-(--text) sm:text-2xl sm:font-semibold leading-snug">
                 {video?.title}
               </h1>
 
@@ -463,7 +463,7 @@ const VideoDetail = () => {
                   <div>
                     <Link
                       to={`/channel/${video?.owner?.username}`}
-                      className="text-base font-semibold text-(--text) hover:text-(--accent) transition-colors"
+                      className="text-sm font-medium text-(--text) hover:text-(--accent) transition-colors sm:text-base sm:font-semibold"
                     >
                       {video?.owner?.fullName}
                     </Link>
@@ -574,7 +574,7 @@ const VideoDetail = () => {
                     </>
                   )}
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-(--text) whitespace-pre-wrap">
+                <p className="mt-3 text-[13px] leading-relaxed text-(--text) whitespace-pre-wrap sm:text-sm">
                   {video?.description}
                 </p>
               </div>
@@ -613,7 +613,7 @@ const VideoDetail = () => {
 
             {/* Comments Section */}
             <section className="rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) sm:p-6">
-              <h2 className="text-lg font-semibold tracking-tight text-(--text)">
+              <h2 className="text-base font-medium tracking-tight text-(--text) sm:text-lg sm:font-semibold">
                 {comments.length} Comment{comments.length !== 1 ? "s" : ""}
               </h2>
 
@@ -650,7 +650,7 @@ const VideoDetail = () => {
                 </form>
               ) : (
                 <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-(--border) bg-(--surface-2) p-4">
-                  <p className="text-sm text-(--muted)">
+                  <p className="text-[13px] text-(--muted) sm:text-sm">
                     Sign in to leave a comment or join the discussion.
                   </p>
                   <Link
@@ -676,7 +676,7 @@ const VideoDetail = () => {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-(--text)">
+                        <span className="text-[13px] font-medium text-(--text) sm:text-sm">
                           {comment?.owner?.fullName || comment?.owner?.username || "User"}
                         </span>
                         <span className="text-xs text-(--muted)">
@@ -691,7 +691,7 @@ const VideoDetail = () => {
                           </>
                         )}
                       </div>
-                      <p className="mt-1.5 text-sm text-(--text) leading-relaxed">
+                      <p className="mt-1.5 text-[13px] text-(--text) leading-relaxed sm:text-sm">
                         {comment.content}
                       </p>
                       <div className="mt-2.5 flex items-center gap-3">
@@ -735,7 +735,7 @@ const VideoDetail = () => {
           <div className="min-w-0 space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-(--accent)" />
-              <h2 className="text-base font-semibold tracking-tight text-(--text)">Related Videos</h2>
+              <h2 className="text-sm font-medium tracking-tight text-(--text) sm:text-base sm:font-semibold">Related Videos</h2>
             </div>
 
             <div className="space-y-3">

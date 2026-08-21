@@ -185,16 +185,16 @@ const Explore = () => {
         </div>
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-(--border) bg-(--surface) px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-(--border) bg-(--surface) px-4 py-3 text-[13px] sm:text-base">
           {/* Duration Filters */}
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-1.5 overflow-x-auto sm:gap-2">
             <Clock size={15} className="text-(--muted)" />
             {durations.map((d) => (
               <button
                 key={d.label}
                 type="button"
                 onClick={() => handleDurationChange(d.value)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                className={`rounded-lg px-2 py-1 text-[11px] font-normal transition-colors cursor-pointer sm:px-2.5 sm:text-xs sm:font-medium ${
                   selectedDuration === d.value
                     ? "bg-(--accent-soft) text-(--accent)"
                     : "text-(--muted) hover:text-(--text)"
@@ -206,18 +206,18 @@ const Explore = () => {
           </div>
 
           {/* Sort Selector */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Filter size={14} className="text-(--muted)" />
-            <span className="text-xs text-(--muted)">Sort by:</span>
+            <span className="text-[11px] text-(--muted) sm:text-xs">Sort by:</span>
             <div className="flex items-center gap-1">
               {sortOptions.map((opt) => (
                 <button
                   key={opt.label}
                   type="button"
                   onClick={() => handleSortChange(opt)}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                  className={`rounded-lg px-2 py-1 text-[11px] font-normal transition-colors cursor-pointer sm:px-2.5 sm:text-xs sm:font-medium ${
                     selectedSort.label === opt.label
-                      ? "bg-(--surface-2) text-(--text) font-semibold"
+                      ? "bg-(--surface-2) text-(--text) font-medium sm:font-semibold"
                       : "text-(--muted) hover:text-(--text)"
                   }`}
                 >

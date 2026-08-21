@@ -90,7 +90,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
 
           <Link
             to="/"
-            className="flex items-center gap-0.5 text-xl font-bold tracking-tight sm:text-2xl"
+            className="flex items-center gap-0.5 text-lg font-semibold tracking-tight sm:text-2xl sm:font-bold"
           >
             <span className="text-(--accent)">My</span>
             <span className="text-(--text)">Tube</span>
@@ -109,7 +109,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-[13px] text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)] sm:text-sm"
           />
 
           <button
@@ -146,7 +146,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
 
               <Link
                 to="/register"
-                className="rounded-full bg-(--accent) px-3 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong) sm:px-5"
+                className="rounded-full bg-(--accent) px-3 py-2 text-xs font-medium text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-(--accent-strong) sm:px-5 sm:text-sm sm:font-semibold"
               >
                 Sign up
               </Link>
@@ -243,7 +243,7 @@ const Navbar = ({ onMenuToggle, isMenuOpen, onSearch }) => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-sm text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+            className="w-full rounded-l-full border border-(--border) bg-(--surface-2) py-2.5 pl-5 pr-4 text-[13px] text-(--text) placeholder:text-(--muted-strong) outline-none transition-colors duration-200 focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)] sm:text-sm"
           />
 
           <button
