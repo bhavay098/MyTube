@@ -438,14 +438,14 @@ const VideoDetail = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Main Video & Comments Column (2 cols on lg) */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="min-w-0 space-y-6 lg:col-span-2">
             {/* Standard Inline Player for Normal View */}
             {!isTheaterMode && playerComponent}
 
             {/* Video Info Card */}
-            <div className="rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
+            <div className="rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) sm:p-6">
               <h1 className="text-xl font-semibold tracking-tight text-(--text) sm:text-2xl leading-snug">
                 {video?.title}
               </h1>
@@ -612,7 +612,7 @@ const VideoDetail = () => {
             </div>
 
             {/* Comments Section */}
-            <section className="rounded-3xl border border-(--border) bg-(--surface) p-6 shadow-(--shadow-sm)">
+            <section className="rounded-3xl border border-(--border) bg-(--surface) p-4 shadow-(--shadow-sm) sm:p-6">
               <h2 className="text-lg font-semibold tracking-tight text-(--text)">
                 {comments.length} Comment{comments.length !== 1 ? "s" : ""}
               </h2>
@@ -627,7 +627,7 @@ const VideoDetail = () => {
                     alt={currentUser?.username}
                     className="mt-1 h-9 w-9 shrink-0 rounded-full object-cover"
                   />
-                  <div className="flex flex-1 gap-2">
+                  <div className="min-w-0 flex flex-1 gap-2">
                     <label htmlFor="video-comment-input" className="sr-only">
                       Add a public comment
                     </label>
@@ -636,12 +636,12 @@ const VideoDetail = () => {
                       value={commentText}
                       onChange={(event) => setCommentText(event.target.value)}
                       placeholder="Add a public comment..."
-                      className="flex-1 rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
+                      className="min-w-0 flex-1 rounded-2xl border border-(--border) bg-(--surface-2) px-4 py-2.5 text-sm text-(--text) outline-none transition-colors duration-200 placeholder:text-(--muted-strong) focus:border-(--accent) focus:shadow-[0_0_0_3px_var(--accent-soft)]"
                     />
                     <button
                       type="submit"
                       disabled={!commentText.trim() || postingComment}
-                      className="flex items-center gap-1.5 rounded-2xl bg-(--accent) px-5 py-2.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-40 cursor-pointer"
+                      className="flex shrink-0 items-center gap-1.5 rounded-2xl bg-(--accent) px-3 py-2.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-(--accent-strong) disabled:opacity-40 sm:px-5 cursor-pointer"
                     >
                       {postingComment ? <Spinner size={14} /> : <Send size={14} />}
                       Post
@@ -732,7 +732,7 @@ const VideoDetail = () => {
           </div>
 
           {/* Right Rail: Related Videos Sidebar (1 col on lg) */}
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-(--accent)" />
               <h2 className="text-base font-semibold tracking-tight text-(--text)">Related Videos</h2>

@@ -43,6 +43,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <App />
       </BrowserRouter>
     </Provider>
-    {process.env.NODE_ENV === "development" && <Agentation />}
+    {import.meta.env.DEV && <Agentation />}
   </React.StrictMode>,
 );
