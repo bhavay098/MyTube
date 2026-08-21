@@ -55,11 +55,9 @@ const Register = () => {
   };
 
   const updateAvatarFile = (file) => {
+    const objectUrl = URL.createObjectURL(file);
     avatarRef.current = file;
-    setAvatarPreview((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
+    setAvatarPreview(objectUrl);
   };
 
   const handleAvatarChange = (e) => {

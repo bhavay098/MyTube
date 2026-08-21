@@ -43,7 +43,9 @@ const UploadVideo = () => {
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => () => { if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview); }, [thumbnailPreview]);
+  useEffect(() => () => {
+    if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
+  }, [thumbnailPreview]);
 
   const handleVideoChange = (file) => {
     if (!file) {
@@ -54,8 +56,9 @@ const UploadVideo = () => {
     else if (file) toast.error("Please upload a valid video file");
   };
   const updateThumbnailFile = (file) => {
+    const objectUrl = URL.createObjectURL(file);
     setThumbnailFile(file);
-    setThumbnailPreview((previous) => { if (previous) URL.revokeObjectURL(previous); return URL.createObjectURL(file); });
+    setThumbnailPreview(objectUrl);
   };
   const handleThumbnailChange = (file) => {
     if (file && file.type.startsWith("image/")) updateThumbnailFile(file);
