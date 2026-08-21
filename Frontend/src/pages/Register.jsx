@@ -180,8 +180,16 @@ const Register = () => {
 
           <div
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
+            role="button"
+            tabIndex={0}
             className="group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--border) bg-(--surface-2) p-6 transition-colors duration-200 hover:border-(--border-strong) hover:bg-(--surface-3)"
           >
             {avatarPreview ? (

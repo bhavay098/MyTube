@@ -10,6 +10,11 @@ export const changePassword = async (payload) => {
   return response.data;
 };
 
+export const deleteAccount = async () => {
+  const response = await axiosInstance.delete("/users/account");
+  return response.data;
+};
+
 export const updateAvatar = async (formData) => {
   const response = await axiosInstance.patch("/users/avatar", formData);
   return response.data.data;

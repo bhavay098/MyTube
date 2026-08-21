@@ -9,6 +9,12 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { validateMongoId } from "../utils/validateMongoId.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { Video } from "../models/video.model.js";
+import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
+import { Tweet } from "../models/tweet.model.js";
+import { Playlist } from "../models/playlist.model.js";
+import { Subscription } from "../models/subscription.model.js";
 
 // Helper function to generate Access and Refresh tokens
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -165,6 +171,76 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("accessToken", cookieOptions)
     .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+// Delete the authenticated user's account and all data owned by that account.
+const deleteCurrentUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select(
+    "+avatarPublicId +coverImagePublicId",
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const ownedVideos = await Video.find({ owner: user._id }).select(
+    "_id videoFilePublicId thumbnailPublicId",
+  );
+  const ownedVideoIds = ownedVideos.map((video) => video._id);
+  const ownedTweets = await Tweet.find({ owner: user._id }).select("_id");
+  const ownedTweetIds = ownedTweets.map((tweet) => tweet._id);
+  const ownedComments = await Comment.find({
+    $or: [{ owner: user._id }, { video: { $in: ownedVideoIds } }],
+  }).select("_id");
+  const ownedCommentIds = ownedComments.map((comment) => comment._id);
+
+  await Promise.all([
+    deleteFromCloudinary(user.avatarPublicId),
+    deleteFromCloudinary(user.coverImagePublicId),
+    ...ownedVideos.flatMap((video) => [
+      deleteFromCloudinary(video.videoFilePublicId, "video"),
+      deleteFromCloudinary(video.thumbnailPublicId, "image"),
+    ]),
+  ]);
+
+  await Promise.all([
+    Like.deleteMany({
+      $or: [
+        { likedBy: user._id },
+        { video: { $in: ownedVideoIds } },
+        { tweet: { $in: ownedTweetIds } },
+        { comment: { $in: ownedCommentIds } },
+      ],
+    }),
+    Comment.deleteMany({ _id: { $in: ownedCommentIds } }),
+    Tweet.deleteMany({ _id: { $in: ownedTweetIds } }),
+    Playlist.deleteMany({ owner: user._id }),
+    Subscription.deleteMany({
+      $or: [{ subscriber: user._id }, { channel: user._id }],
+    }),
+    User.updateMany(
+      {},
+      { $pull: { watchHistory: { $in: ownedVideoIds } } },
+    ),
+    Playlist.updateMany(
+      {},
+      { $pull: { videos: { $in: ownedVideoIds } } },
+    ),
+    Video.deleteMany({ _id: { $in: ownedVideoIds } }),
+    User.findByIdAndDelete(user._id),
+  ]);
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new ApiResponse(200, {}, "Account deleted successfully"));
 });
 
 // Refresh access token
@@ -519,6 +595,7 @@ export {
   registerUser,
   loginUser,
   logoutUser,
+  deleteCurrentUser,
   refreshAccessToken,
   changeCurrentPassword,
   getCurrentUser,

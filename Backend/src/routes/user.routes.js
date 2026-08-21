@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     loginUser,
     logoutUser,
+    deleteCurrentUser,
     registerUser,
     refreshAccessToken,
     changeCurrentPassword,
@@ -42,6 +43,7 @@ router.route('/channel/:username').get(optionalJWT, getUserChannelProfile);
 
 // ------------- SECURED ROUTES -----------------
 router.route('/logout').post(verifyJWT, logoutUser);
+router.route('/account').delete(verifyJWT, deleteCurrentUser);
 router.route('/change-password').post(verifyJWT, changeCurrentPassword);
 router.route('/current-user').get(verifyJWT, getCurrentUser);
 router.route('/update-account').patch(verifyJWT, updateAccountDetails);
